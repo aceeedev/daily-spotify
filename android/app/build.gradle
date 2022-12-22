@@ -51,6 +51,9 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders += [
+         'appAuthRedirectScheme': 'com.example.daily-spotify' // Add this also using your application ID URI as the based for all your derived URi
+ ]
     }
 
     buildTypes {

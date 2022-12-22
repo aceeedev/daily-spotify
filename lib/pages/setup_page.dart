@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
+import 'package:daily_spotify/backend/spotify_api/spotify_api.dart' as spotify;
 import 'package:daily_spotify/pages/home_page.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 
@@ -94,9 +96,18 @@ class _StepOneState extends State<StepOne> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('Step One'),
-        Text(
+        const Text('Step One'),
+        const Text(
             'First we need to personalize your music taste by viewing your Spotify account'),
+        TextButton(
+          onPressed: () async {
+            //spotify.authorizationCodeFlowWithPKCE();
+
+            String? authCode = await spotify.requestUserAuthWithPKCE();
+            print(authCode);
+          },
+          child: const Text('Login with Spotify'),
+        ),
       ],
     );
   }
