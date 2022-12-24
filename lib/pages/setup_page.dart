@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
-import 'package:daily_spotify/backend/spotify_api/spotify_api.dart' as spotify;
+import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/pages/home_page.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 
@@ -98,13 +97,15 @@ class _StepOneState extends State<StepOne> {
       children: [
         const Text('Step One'),
         const Text(
-            'First we need to personalize your music taste by viewing your Spotify account'),
+            'First we need to personalize your music taste by viewing your Spotify account.'),
         TextButton(
           onPressed: () async {
-            //spotify.authorizationCodeFlowWithPKCE();
+            String? authCode = await spotify_auth.requestUserAuth();
 
-            String? authCode = await spotify.requestUserAuthWithPKCE();
-            print(authCode);
+            if (authCode != null) {
+              if (!mounted) return;
+              context.read<SetupForm>().setFinishedStep(true);
+            }
           },
           child: const Text('Login with Spotify'),
         ),
@@ -123,7 +124,14 @@ class StepTwo extends StatefulWidget {
 class _StepTwoState extends State<StepTwo> {
   @override
   Widget build(BuildContext context) {
-    return const Text("Step Two");
+    return Column(
+      children: [
+        const Text('Step Two'),
+        const Text('Now pick your favorite genres.'),
+        const Text(
+            'If you don\'t know what genres to pick, just continue to the next step, you can always change these settings later.')
+      ],
+    );
   }
 }
 
@@ -170,18 +178,21 @@ class NextOrPreviousStepButton extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(!nextOrPrevious ? paddingSize : 0, 0,
           nextOrPrevious ? paddingSize : 0, 0),
-      child: IconButton(
-          onPressed: () {
-            if (context.read<SetupForm>().step >= 3 && nextOrPrevious) {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const HomePage()));
-            } else {
-              context.read<SetupForm>().addToStep(nextOrPrevious ? 1 : -1);
-            }
-          },
-          icon: Icon(
-              nextOrPrevious ? Icons.navigate_next : Icons.navigate_before,
-              size: 40.0)),
+      child: context.watch<SetupForm>().finishedStep || !nextOrPrevious
+          ? IconButton(
+              onPressed: () {
+                if (context.read<SetupForm>().step >= 3 && nextOrPrevious) {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const HomePage()));
+                } else {
+                  context.read<SetupForm>().addToStep(nextOrPrevious ? 1 : -1);
+                  context.read<SetupForm>().setFinishedStep(false);
+                }
+              },
+              icon: Icon(
+                  nextOrPrevious ? Icons.navigate_next : Icons.navigate_before,
+                  size: 40.0))
+          : const SizedBox.shrink(),
     );
   }
 }

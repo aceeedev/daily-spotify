@@ -1,0 +1,152 @@
+import 'dart:convert';
+import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'package:flutter_web_auth/flutter_web_auth.dart';
+//import 'package:crypto/crypto.dart';
+import 'package:daily_spotify/secrets.dart' as secrets;
+import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/backend/spotify_api/models/access_token.dart';
+
+const _redirectUriScheme = 'com.example.daily-spotify';
+
+String _getRandomString(int length) {
+  const chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random rnd = Random.secure();
+
+  return String.fromCharCodes(Iterable.generate(
+      length, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+}
+
+String _getAuthUrl(String redirectUri, String state) {
+  const scope = 'user-top-read user-read-recently-played';
+  redirectUri += '://';
+  //final codeVerifier = _getRandomString(100);
+  //final codeChallenge = sha256.convert(utf8.encode(codeVerifier)).toString();
+
+  final queryParameters = {
+    'response_type': 'code',
+    'client_id': secrets.spotifyClientId,
+    'scope': scope,
+    'redirect_uri': redirectUri,
+    'state': state,
+    //'code_challenge_method': 'S256',
+    //'code_challenge': codeChallenge
+  };
+
+  final url = Uri.https('accounts.spotify.com', '/authorize', queryParameters)
+      .toString();
+
+  // save codeVerifier
+
+  return url;
+}
+
+/// Returns a [String] with the authorization code from Spotify. If there was an
+/// error, [null] will be returned.
+Future<String?> requestUserAuth() async {
+  const callbackUrlScheme = _redirectUriScheme;
+  final state = _getRandomString(12);
+  final url = _getAuthUrl(callbackUrlScheme, state);
+  try {
+    final result = await FlutterWebAuth.authenticate(
+        url: url, callbackUrlScheme: callbackUrlScheme);
+
+    final queryResult = Uri.parse(result).queryParameters;
+    if (queryResult['error'] != null) {
+      throw Exception(
+          'There was an error when requesting User Authorization from Spotify:\n${queryResult['error']}');
+    }
+    if (queryResult['state'] != state) {
+      throw Exception(
+          'The state returned by the auth does not match the state provided to the auth:\nprovided: $state\nreturned: ${queryResult['state']}');
+    }
+
+    return queryResult['code'];
+  } catch (e) {
+    print(e);
+    print('Error, user cancelled auth.');
+
+    return null;
+  }
+}
+
+/// Returns an [AccessToken]  that can be used to send requests to Spotify's WEB
+/// API. The method automatically refreshes the access token if needed.
+///
+/// Before using this function you must request the user's permission with the
+/// function [requestUserAuthWithPKCE] which is the [authCode].
+Future<AccessToken> requestAccessToken(String authCode) async {
+  AccessToken? accessToken = await db.Auth.instance.getAccessToken();
+
+  if (accessToken == null) {
+    final url = Uri.https('accounts.spotify.com', '/api/token');
+    final form = {
+      'code': authCode,
+      'redirect_uri': '$_redirectUriScheme://',
+      'grant_type': 'authorization_code'
+    };
+    final headers = {
+      'Authorization':
+          'Basic ${base64.encode(utf8.encode('${secrets.spotifyClientId}:${secrets.spotifyClientSecret}'))}',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    };
+
+    final response =
+        await http.Client().post(url, headers: headers, body: form);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> json = jsonDecode(response.body);
+
+      final newAccessToken = AccessToken(
+          accessToken: json['access_token'],
+          tokenType: json['token_type'],
+          scope: json['scope'],
+          expiresIn: json['expires_in'],
+          createdAt: DateTime.now(),
+          refreshToken: json['refresh_token']);
+      db.Auth.instance.saveAccessToken(newAccessToken);
+
+      return newAccessToken;
+    } else {
+      throw Exception('Response code was not 200, was ${response.statusCode}');
+    }
+  } else {
+    if (accessToken.expiresAt.isBefore(DateTime.now())) {
+      // refresh the access token
+      final url = Uri.https('accounts.spotify.com', '/api/token');
+      final form = {
+        'grant_type': 'refresh_token',
+        'refresh_token': accessToken.refreshToken
+      };
+      final headers = {
+        'Authorization':
+            'Basic ${base64.encode(utf8.encode('${secrets.spotifyClientId}:${secrets.spotifyClientSecret}'))}',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      };
+
+      final response =
+          await http.Client().post(url, headers: headers, body: form);
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> json = jsonDecode(response.body);
+
+        final newAccessToken = AccessToken(
+            accessToken: json['access_token'],
+            tokenType: json['token_type'],
+            scope: json['scope'],
+            expiresIn: json['expires_in'],
+            createdAt: DateTime.now(),
+            refreshToken: accessToken.refreshToken);
+        db.Auth.instance.saveAccessToken(newAccessToken);
+
+        return newAccessToken;
+      } else {
+        throw Exception(
+            'Response code was not 200, was ${response.statusCode}');
+      }
+    } else {
+      return accessToken;
+    }
+  }
+}
