@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
-import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/pages/home_page.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
+import 'package:daily_spotify/widgets/step_one.dart';
+import 'package:daily_spotify/widgets/step_two.dart';
+import 'package:daily_spotify/widgets/step_three.dart';
+import 'package:daily_spotify/widgets/step_four.dart';
 
 class SetupPage extends StatefulWidget {
   const SetupPage({super.key});
@@ -29,7 +32,7 @@ class _SetupPageState extends State<SetupPage> {
       body: Frame(
         child: Column(
           children: <Widget>[
-            stepWidgets[context.watch<SetupForm>().step],
+            Expanded(child: stepWidgets[context.watch<SetupForm>().step]),
             const Spacer(),
             Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -80,86 +83,6 @@ class _SetupPageState extends State<SetupPage> {
         .add(const NextOrPreviousStepButton(nextOrPrevious: true));
 
     return navigationStepButtons;
-  }
-}
-
-class StepOne extends StatefulWidget {
-  const StepOne({super.key});
-
-  @override
-  State<StepOne> createState() => _StepOneState();
-}
-
-class _StepOneState extends State<StepOne> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Step One'),
-        const Text(
-            'First we need to personalize your music taste by viewing your Spotify account.'),
-        TextButton(
-          onPressed: () async {
-            String? authCode = await spotify_auth.requestUserAuth();
-
-            if (authCode != null) {
-              if (!mounted) return;
-              context.read<SetupForm>().setFinishedStep(true);
-            }
-          },
-          child: const Text('Login with Spotify'),
-        ),
-      ],
-    );
-  }
-}
-
-class StepTwo extends StatefulWidget {
-  const StepTwo({super.key});
-
-  @override
-  State<StepTwo> createState() => _StepTwoState();
-}
-
-class _StepTwoState extends State<StepTwo> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Step Two'),
-        const Text('Now pick your favorite genres.'),
-        const Text(
-            'If you don\'t know what genres to pick, just continue to the next step, you can always change these settings later.')
-      ],
-    );
-  }
-}
-
-class StepThree extends StatefulWidget {
-  const StepThree({super.key});
-
-  @override
-  State<StepThree> createState() => _StepThreeState();
-}
-
-class _StepThreeState extends State<StepThree> {
-  @override
-  Widget build(BuildContext context) {
-    return const Text("Step Three");
-  }
-}
-
-class StepFour extends StatefulWidget {
-  const StepFour({super.key});
-
-  @override
-  State<StepFour> createState() => _StepFourState();
-}
-
-class _StepFourState extends State<StepFour> {
-  @override
-  Widget build(BuildContext context) {
-    return const Text("Step Four");
   }
 }
 

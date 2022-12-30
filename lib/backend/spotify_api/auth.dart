@@ -76,7 +76,7 @@ Future<String?> requestUserAuth() async {
 ///
 /// Before using this function you must request the user's permission with the
 /// function [requestUserAuthWithPKCE] which is the [authCode].
-Future<AccessToken> requestAccessToken(String authCode) async {
+Future<AccessToken> requestAccessToken(String? authCode) async {
   AccessToken? accessToken = await db.Auth.instance.getAccessToken();
 
   if (accessToken == null) {
