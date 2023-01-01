@@ -45,6 +45,9 @@ class _StepTwoState extends State<StepTwo> {
     List<Artist> artistList =
         await getUserTopItems(accessToken: accessToken, type: 'artists');
 
+    if (!mounted) return;
+    context.read<SetupForm>().addAllToTotalArtistList(artistList);
+
     Map<String, int> genresMap = {};
     for (Artist artist in artistList) {
       artist.genres!.toList().forEach((genre) {
@@ -113,8 +116,6 @@ class _GenreButtonState extends State<GenreButton> {
               });
             }
           }
-
-          print(context.read<SetupForm>().selectedGenreList.toString());
         },
         style: widget.selected
             ? TextButton.styleFrom(backgroundColor: Colors.grey[200])

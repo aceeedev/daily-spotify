@@ -33,11 +33,13 @@ class _SetupPageState extends State<SetupPage> {
         child: Column(
           children: <Widget>[
             Expanded(child: stepWidgets[context.watch<SetupForm>().step]),
-            const Spacer(),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children:
-                    getNavigationStepButtons(context.read<SetupForm>().step)),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:
+                      getNavigationStepButtons(context.read<SetupForm>().step)),
+            ),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Row(
@@ -109,7 +111,7 @@ class NextOrPreviousStepButton extends StatelessWidget {
                       builder: (context) => const HomePage()));
                 } else {
                   context.read<SetupForm>().addToStep(nextOrPrevious ? 1 : -1);
-                  context.read<SetupForm>().setFinishedStep(false);
+                  //context.read<SetupForm>().setFinishedStep(false);
                 }
               },
               icon: Icon(
