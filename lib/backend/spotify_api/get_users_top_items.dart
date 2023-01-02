@@ -11,7 +11,7 @@ import 'package:daily_spotify/backend/spotify_api/models/spotify_image.dart';
 /// You must provide an [accessToken]
 Future<dynamic> getUserTopItems(
     {required AccessToken accessToken,
-    required String type,
+    required Type type,
     int limit = 20,
     int offset = 0,
     String timeRange = 'medium_term'}) async {
@@ -20,7 +20,10 @@ Future<dynamic> getUserTopItems(
     'offset': offset,
     'time_range': timeRange
   }.map((key, value) => MapEntry(key, value.toString()));
-  final url = Uri.https('api.spotify.com', '/v1/me/top/$type', queryParameters);
+  final url = Uri.https(
+      'api.spotify.com',
+      '/v1/me/top/${type == Artist ? 'artists' : type == Track ? 'tracks' : ''}',
+      queryParameters);
   final headers = {
     'Authorization': 'Bearer ${accessToken.accessToken}',
     'Content-Type': 'application/json'
@@ -31,37 +34,29 @@ Future<dynamic> getUserTopItems(
   if (response.statusCode == 200) {
     Map<String, dynamic> json = jsonDecode(response.body);
 
-    if (type == 'tracks') {
+    if (type == Track) {
       List<Track> tracksList = [];
 
       for (Map<String, dynamic> item in json['items']) {
-        List<Artist> artists = [];
-        for (Map<String, dynamic> artist in json['artists']) {
-          artists.add(Artist(
-              id: artist['id'],
-              name: artist['name'],
-              uri: artist['uri'],
-              spotifyUrl: artist['external_urls']['spotify']));
-        }
-
-        List<SpotifyImage> images = [];
-        for (Map<String, dynamic> image in json['images']) {
-          images.add(SpotifyImage(
-              height: image['height'],
-              url: image['url'],
-              width: image['width']));
-        }
-
         tracksList.add(Track(
             id: item['id'],
             name: item['name'],
             uri: item['uri'],
-            artists: artists,
-            images: images));
+            artists: (item['artists'] as List<dynamic>)
+                .map((e) => Artist(
+                    id: e['id'],
+                    name: e['name'],
+                    uri: e['uri'],
+                    spotifyUrl: e['external_urls']['spotify']))
+                .toList(),
+            images: (item['album']['images'] as List<dynamic>)
+                .map((e) => SpotifyImage(
+                    height: e['height'], url: e['url'], width: e['width']))
+                .toList()));
       }
 
       return tracksList;
-    } else if (type == 'artists') {
+    } else if (type == Artist) {
       List<Artist> artistsList = [];
 
       for (Map<String, dynamic> item in json['items']) {

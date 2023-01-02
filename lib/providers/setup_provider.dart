@@ -66,7 +66,7 @@ class SetupForm with ChangeNotifier {
   }
 
   void removeFromSelectedArtistList(Artist artist) {
-    _selectedArtistList.remove(artist);
+    _selectedArtistList.removeWhere(((element) => element.id == artist.id));
   }
 
   void addAllToTotalTrackList(List<Track> listToAdd) {
@@ -84,6 +84,6 @@ class SetupForm with ChangeNotifier {
   }
 
   void removeFromSelectedTrackList(Track track) {
-    _selectedTrackList.remove(track);
+    _selectedTrackList.removeWhere((element) => element.id == track.id);
   }
 }

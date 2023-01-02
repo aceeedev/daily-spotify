@@ -43,7 +43,7 @@ class _StepTwoState extends State<StepTwo> {
     AccessToken accessToken = await spotify_auth.requestAccessToken(null);
 
     List<Artist> artistList =
-        await getUserTopItems(accessToken: accessToken, type: 'artists');
+        await getUserTopItems(accessToken: accessToken, type: Artist);
 
     if (!mounted) return;
     context.read<SetupForm>().addAllToTotalArtistList(artistList);
