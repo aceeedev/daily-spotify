@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/pages/home_page.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
@@ -105,8 +106,16 @@ class NextOrPreviousStepButton extends StatelessWidget {
           nextOrPrevious ? paddingSize : 0, 0),
       child: context.watch<SetupForm>().finishedStep || !nextOrPrevious
           ? IconButton(
-              onPressed: () {
+              onPressed: () async {
                 if (context.read<SetupForm>().step >= 3 && nextOrPrevious) {
+                  // last step--finished step 4
+                  await db.Config.instance.saveGenreConfig(
+                      context.read<SetupForm>().selectedGenreList);
+                  await db.Config.instance.saveArtistConfig(
+                      context.read<SetupForm>().selectedArtistList);
+                  await db.Config.instance.saveTrackConfig(
+                      context.read<SetupForm>().selectedTrackList);
+
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const HomePage()));
                 } else {

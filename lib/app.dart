@@ -6,7 +6,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Daily Spotify',
       theme: ThemeData(primarySwatch: Colors.green, useMaterial3: true),
       home: const SetupPage(),
     );

@@ -105,7 +105,7 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
           expiresIn: json['expires_in'],
           createdAt: DateTime.now(),
           refreshToken: json['refresh_token']);
-      db.Auth.instance.saveAccessToken(newAccessToken);
+      await db.Auth.instance.saveAccessToken(newAccessToken);
 
       return newAccessToken;
     } else {
@@ -138,7 +138,7 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
             expiresIn: json['expires_in'],
             createdAt: DateTime.now(),
             refreshToken: accessToken.refreshToken);
-        db.Auth.instance.saveAccessToken(newAccessToken);
+        await db.Auth.instance.saveAccessToken(newAccessToken);
 
         return newAccessToken;
       } else {
