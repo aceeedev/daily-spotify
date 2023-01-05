@@ -4,6 +4,7 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 class SetupForm with ChangeNotifier {
   int _step = 0;
   bool _finishedStep = false;
+  int _lastFinishedStep = -1;
 
   static const int _maxNumSelections = 3;
 
@@ -16,6 +17,7 @@ class SetupForm with ChangeNotifier {
 
   int get step => _step;
   bool get finishedStep => _finishedStep;
+  int get lastFinishedStep => _lastFinishedStep;
   List<String> get totalGenreList => _totalGenreList;
   List<String> get selectedGenreList => _selectedGenreList;
   List<Artist> get totalArtistList => _totalArtistList;
@@ -28,8 +30,16 @@ class SetupForm with ChangeNotifier {
     notifyListeners();
   }
 
-  void setFinishedStep(bool value) {
+  void setFinishedStep(bool value, {bool notify = true}) {
     _finishedStep = value;
+
+    if (notify) {
+      notifyListeners();
+    }
+  }
+
+  void setLastFinishedStep(int value) {
+    _lastFinishedStep = value;
     notifyListeners();
   }
 

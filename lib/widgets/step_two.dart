@@ -1,3 +1,4 @@
+import 'package:daily_spotify/backend/spotify_api/get_available_genre_seeds.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
@@ -23,10 +24,8 @@ class _StepTwoState extends State<StepTwo> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Step Two'),
-        const Text('Now pick your top three favorite genres.'),
-        const Text(
-            'If you don\'t know what genres to pick, just continue to the next step, you can always change these settings later.'),
+        const Text('Pick your top three favorite genres',
+            textAlign: TextAlign.center),
         Expanded(
           child: SingleChildScrollView(
             child: Wrap(
@@ -58,6 +57,16 @@ class _StepTwoState extends State<StepTwo> {
         }
       });
     }
+
+    // remove genres that are not able to be used as a recommendation
+    List<String> availableSeedGenres =
+        await getAvailableGenreSeeds(accessToken: accessToken);
+
+    genresMap = genresMap
+        .map((key, value) => MapEntry(key.replaceAll(' ', '-'), value));
+    genresMap.removeWhere((key, value) => !availableSeedGenres.contains(key));
+
+    // sort by descending value of number of times it appears in an artist
     genresMap = Map.fromEntries(genresMap.entries.toList()
       ..sort((e1, e2) => e2.value.compareTo(e1.value)));
 
@@ -120,6 +129,6 @@ class _GenreButtonState extends State<GenreButton> {
         style: widget.selected
             ? TextButton.styleFrom(backgroundColor: Colors.grey[200])
             : TextButton.styleFrom(),
-        child: Text(widget.genre));
+        child: Text(widget.genre.replaceAll('-', ' ')));
   }
 }

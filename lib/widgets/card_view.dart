@@ -73,14 +73,6 @@ class CustomCard extends StatefulWidget {
 }
 
 class _CustomCardState extends State<CustomCard> {
-  late String? artists;
-  @override
-  void initState() {
-    super.initState();
-
-    artists = getArtists();
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -159,22 +151,10 @@ class _CustomCardState extends State<CustomCard> {
               textAlign: TextAlign.center,
             ),
             widget.type == Track
-                ? Text(artists ?? '', textAlign: TextAlign.center)
+                ? Text((widget.item as Track).getArtists(),
+                    textAlign: TextAlign.center)
                 : const SizedBox.shrink(),
           ])),
     );
-  }
-
-  String? getArtists() {
-    if (widget.type != Track) {
-      return null;
-    }
-
-    List<String> artists = [];
-    for (var artist in (widget.item.artists as List<Artist>)) {
-      artists.add(artist.name);
-    }
-
-    return artists.join(', ');
   }
 }

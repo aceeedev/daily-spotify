@@ -23,4 +23,13 @@ class Track {
       required this.uri,
       required this.artists,
       required this.images});
+
+  String getArtists() {
+    List<String> artists = [];
+    for (Artist artist in this.artists) {
+      artists.add(artist.name);
+    }
+
+    return artists.join(', ');
+  }
 }

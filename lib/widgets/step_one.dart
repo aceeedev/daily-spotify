@@ -15,9 +15,10 @@ class _StepOneState extends State<StepOne> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Step One'),
         const Text(
-            'First we need to personalize your music taste by viewing your Spotify account.'),
+          'First we need to personalize your music taste by viewing your Spotify account',
+          textAlign: TextAlign.center,
+        ),
         TextButton(
           onPressed: () async {
             String? authCode = await spotify_auth.requestUserAuth();

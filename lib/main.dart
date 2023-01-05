@@ -7,6 +7,7 @@ import 'package:daily_spotify/backend/spotify_api/models/access_token.dart';
 import 'package:daily_spotify/backend/spotify_api/models/artist.dart';
 import 'package:daily_spotify/backend/spotify_api/models/spotify_image.dart';
 import 'package:daily_spotify/backend/spotify_api/models/track.dart';
+import 'package:daily_spotify/models/daily_track.dart';
 
 void main() async {
   // Allows for async code in main method
@@ -18,6 +19,7 @@ void main() async {
   Hive.registerAdapter(ArtistAdapter());
   Hive.registerAdapter(SpotifyImageAdapter());
   Hive.registerAdapter(TrackAdapter());
+  Hive.registerAdapter(DailyTrackAdapter());
 
   runApp(MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => SetupForm())],

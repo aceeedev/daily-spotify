@@ -1,6 +1,7 @@
-import 'package:async/async.dart';
+import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
+import 'package:daily_spotify/models/daily_track.dart';
 
 class Auth {
   static final Auth instance = Auth._init();
@@ -55,4 +56,25 @@ class Config {
   Future<List<Track>> getTrackConfig() async => (await box).get('track');
 }
 
-class Songs {}
+class Tracks {
+  static final Tracks instance = Tracks._init();
+  static Box? _box;
+
+  Tracks._init();
+
+  Future<Box> get box async {
+    if (_box != null) return _box!;
+
+    _box = await Hive.openBox('tracks');
+    return _box!;
+  }
+
+  Future<void> saveDailyTrack(DailyTrack dailyTrack) async =>
+      (await box).put(DateFormat.yMd().format(dailyTrack.date), dailyTrack);
+
+  Future<DailyTrack?> getDailyTrack(DateTime date) async =>
+      (await box).get(DateFormat.yMd().format(date));
+
+  Future<List<DailyTrack>> getAllDailyTracks() async =>
+      (await box).values.cast<DailyTrack>().toList();
+}

@@ -5,7 +5,7 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 //import 'package:crypto/crypto.dart';
 import 'package:daily_spotify/secrets.dart' as secrets;
 import 'package:daily_spotify/backend/database_manager.dart' as db;
-import 'package:daily_spotify/backend/spotify_api/models/access_token.dart';
+import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 
 const _redirectUriScheme = 'com.example.daily-spotify';
 

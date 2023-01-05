@@ -12,30 +12,40 @@ class StepThree extends StatefulWidget {
 }
 
 class _StepThreeState extends State<StepThree> {
+  List<Artist> itemList = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    getItemList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Step Three'),
-        const Text('Now pick your top three favorite artists.'),
         const Text(
-            'If you don\'t know what artists to pick, just continue to the next step, you can always change these settings later.'),
-        Expanded(child: CardView(itemList: getItemList(), type: Artist)),
+          'Pick your top three favorite artists',
+          textAlign: TextAlign.center,
+        ),
+        Expanded(child: CardView(itemList: itemList, type: Artist)),
       ],
     );
   }
 
-  List<Artist> getItemList() {
+  void getItemList() {
     List<Artist> totalArtistList = context.read<SetupForm>().totalArtistList;
 
-    List<Artist> itemList = [];
+    List<Artist> newItemList = [];
     for (int i = 0; i < totalArtistList.length; i++) {
       if (i <= 2) {
         context.read<SetupForm>().addToSelectedArtistList(totalArtistList[i]);
       }
-      itemList.add(totalArtistList[i]);
+      newItemList.add(totalArtistList[i]);
     }
 
-    return itemList;
+    setState(() => itemList = newItemList);
+    context.read<SetupForm>().setFinishedStep(true, notify: false);
   }
 }

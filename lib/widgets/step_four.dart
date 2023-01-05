@@ -26,10 +26,10 @@ class _StepFourState extends State<StepFour> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Step Four'),
-        const Text('Now pick your top three favorite songs.'),
         const Text(
-            'If you don\'t know what songs to pick, just continue to the next step, you can always change these settings later.'),
+          'pick your top three favorite songs',
+          textAlign: TextAlign.center,
+        ),
         Expanded(child: CardView(itemList: itemList, type: Track)),
       ],
     );
@@ -51,8 +51,9 @@ class _StepFourState extends State<StepFour> {
       newItemList.add(totalTrackList[i]);
     }
 
-    setState(() {
-      itemList = newItemList;
-    });
+    setState(() => itemList = newItemList);
+
+    if (!mounted) return;
+    context.read<SetupForm>().setFinishedStep(true);
   }
 }

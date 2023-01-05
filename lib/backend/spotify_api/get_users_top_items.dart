@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:daily_spotify/backend/spotify_api/models/access_token.dart';
-import 'package:daily_spotify/backend/spotify_api/models/track.dart';
-import 'package:daily_spotify/backend/spotify_api/models/artist.dart';
-import 'package:daily_spotify/backend/spotify_api/models/spotify_image.dart';
+import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 
 /// Returns a [List] of the the top [limit] tracks or albums for the authorized
 /// user depending on the [type] parameter of the authorized user.

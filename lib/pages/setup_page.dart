@@ -60,7 +60,7 @@ class _SetupPageState extends State<SetupPage> {
 
     int totalSteps = 4;
     for (int i = 0; i < totalSteps; i++) {
-      stepCircleIcons.add(Icon(i < step
+      stepCircleIcons.add(Icon(i == step
           ? Icons.radio_button_checked
           : Icons.radio_button_unchecked));
     }
@@ -104,7 +104,7 @@ class NextOrPreviousStepButton extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(!nextOrPrevious ? paddingSize : 0, 0,
           nextOrPrevious ? paddingSize : 0, 0),
-      child: context.watch<SetupForm>().finishedStep || !nextOrPrevious
+      child: !nextOrPrevious || context.watch<SetupForm>().finishedStep
           ? IconButton(
               onPressed: () async {
                 if (context.read<SetupForm>().step >= 3 && nextOrPrevious) {
@@ -120,6 +120,7 @@ class NextOrPreviousStepButton extends StatelessWidget {
                       builder: (context) => const HomePage()));
                 } else {
                   context.read<SetupForm>().addToStep(nextOrPrevious ? 1 : -1);
+
                   //context.read<SetupForm>().setFinishedStep(false);
                 }
               },
