@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
@@ -33,18 +34,27 @@ class _HomePageState extends State<HomePage> {
 
                 return Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                          'Your song of ${DateFormat('MMM d').format(dailyTrack.date)}'),
+                      Padding(
+                          padding: const EdgeInsets.only(bottom: 15.0),
+                          child: Text(
+                              'Your song of ${DateFormat('MMM d').format(dailyTrack.date)}',
+                              style: Styles().largeText)),
                       Image.network(
                         track.images[1].url,
                         width: track.images[1].width.toDouble(),
                         height: track.images[1].height.toDouble(),
                       ),
-                      Text(track.name),
-                      Text(track.getArtists())
+                      Text(
+                        track.name,
+                        style: Styles().titleText,
+                      ),
+                      Text(
+                        track.getArtists(),
+                        style: Styles().subtitleText,
+                      )
                     ],
                   ),
                 );

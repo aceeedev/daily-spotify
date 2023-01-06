@@ -107,28 +107,35 @@ class GenreButton extends StatefulWidget {
 class _GenreButtonState extends State<GenreButton> {
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-        onPressed: () {
-          if (widget.selected) {
-            context.read<SetupForm>().removeFromSelectedGenreList(widget.genre);
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ElevatedButton(
+          onPressed: () {
+            if (widget.selected) {
+              context
+                  .read<SetupForm>()
+                  .removeFromSelectedGenreList(widget.genre);
 
-            setState(() {
-              widget.selected = false;
-            });
-          } else {
-            String? addedGenre =
-                context.read<SetupForm>().addToSelectedGenreList(widget.genre);
-
-            if (addedGenre != null) {
               setState(() {
-                widget.selected = true;
+                widget.selected = false;
               });
+            } else {
+              String? addedGenre = context
+                  .read<SetupForm>()
+                  .addToSelectedGenreList(widget.genre);
+
+              if (addedGenre != null) {
+                setState(() {
+                  widget.selected = true;
+                });
+              }
             }
-          }
-        },
-        style: widget.selected
-            ? TextButton.styleFrom(backgroundColor: Colors.grey[200])
-            : TextButton.styleFrom(),
-        child: Text(widget.genre.replaceAll('-', ' ')));
+          },
+          style: widget.selected
+              ? ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[200], elevation: 0.0)
+              : ElevatedButton.styleFrom(elevation: 1.5),
+          child: Text(widget.genre.replaceAll('-', ' '))),
+    );
   }
 }

@@ -51,9 +51,11 @@ class Config {
 
   Future<List<String>> getGenreConfig() async => (await box).get('genre');
 
-  Future<List<Artist>> getArtistConfig() async => (await box).get('artist');
+  Future<List<Artist>> getArtistConfig() async =>
+      ((await box).get('artist') as List<dynamic>).cast<Artist>();
 
-  Future<List<Track>> getTrackConfig() async => (await box).get('track');
+  Future<List<Track>> getTrackConfig() async =>
+      ((await box).get('track') as List<dynamic>).cast<Track>();
 }
 
 class Tracks {

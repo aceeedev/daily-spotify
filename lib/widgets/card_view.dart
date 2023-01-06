@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
+import 'package:daily_spotify/styles.dart';
 
 /// A [GridView] of custom [Card]s.
 ///
@@ -136,25 +137,35 @@ class _CustomCardState extends State<CustomCard> {
       },
       child: Card(
           color: widget.selected ? Colors.grey[200] : null,
-          child: Column(children: [
-            AspectRatio(
-              aspectRatio: widget.type == Artist ? 8 / 7 : 3 / 2,
-              child: Image.network((widget.item.images[1] as SpotifyImage).url,
-                  width:
-                      (widget.item.images[1] as SpotifyImage).width.toDouble(),
-                  height: (widget.item.images[1] as SpotifyImage)
-                      .height
-                      .toDouble()),
-            ),
-            Text(
-              widget.item.name,
-              textAlign: TextAlign.center,
-            ),
-            widget.type == Track
-                ? Text((widget.item as Track).getArtists(),
-                    textAlign: TextAlign.center)
-                : const SizedBox.shrink(),
-          ])),
+          elevation: widget.selected ? 0.0 : 1.5,
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(children: [
+              AspectRatio(
+                aspectRatio: widget.type == Artist ? 8 / 7 : 3 / 2,
+                child: Image.network(
+                    (widget.item.images[1] as SpotifyImage).url,
+                    width: (widget.item.images[1] as SpotifyImage)
+                        .width
+                        .toDouble(),
+                    height: (widget.item.images[1] as SpotifyImage)
+                        .height
+                        .toDouble()),
+              ),
+              Text(
+                widget.item.name,
+                textAlign: TextAlign.center,
+                style: Styles().titleText,
+              ),
+              widget.type == Track
+                  ? Text(
+                      (widget.item as Track).getArtists(),
+                      textAlign: TextAlign.center,
+                      style: Styles().subtitleText,
+                    )
+                  : const SizedBox.shrink(),
+            ]),
+          )),
     );
   }
 }

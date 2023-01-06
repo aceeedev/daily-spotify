@@ -1,7 +1,7 @@
-import 'package:daily_spotify/backend/spotify_api/models/artist.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:flutter/material.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/pages/setup_page.dart';
 import 'package:daily_spotify/pages/home_page.dart';
 
