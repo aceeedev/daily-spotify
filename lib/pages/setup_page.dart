@@ -4,10 +4,10 @@ import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/pages/home_page.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
-import 'package:daily_spotify/widgets/step_one.dart';
-import 'package:daily_spotify/widgets/step_two.dart';
-import 'package:daily_spotify/widgets/step_three.dart';
-import 'package:daily_spotify/widgets/step_four.dart';
+import 'package:daily_spotify/widgets/spotify_login.dart';
+import 'package:daily_spotify/widgets/genre_selector.dart';
+import 'package:daily_spotify/widgets/artist_selector.dart';
+import 'package:daily_spotify/widgets/track_selector.dart';
 
 class SetupPage extends StatefulWidget {
   const SetupPage({super.key});
@@ -18,10 +18,10 @@ class SetupPage extends StatefulWidget {
 
 class _SetupPageState extends State<SetupPage> {
   final List<Widget> stepWidgets = const [
-    StepOne(),
-    StepTwo(),
-    StepThree(),
-    StepFour()
+    SpotifyLogin(),
+    GenreSelector(),
+    ArtistSelector(),
+    TrackSelector()
   ];
 
   @override

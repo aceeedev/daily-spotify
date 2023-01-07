@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
 class Styles {
+  // text:
   static const _textSizeDefault = 11.0;
   static const _textSizeTitle = 18.0;
   static const _textSizeSubtitle = 14.0;
   static const _textSizeLarge = 24.0;
-
-  static final MaterialColor _accentColor =
-      _createMaterialColor(const Color(0x001db9a2));
 
   final TextStyle _defaultText = const TextStyle(
     fontSize: _textSizeDefault,
@@ -34,8 +32,32 @@ class Styles {
   TextStyle get subtitleText => _subtitleText;
   TextStyle get largeText => _largeText;
 
+  // color:
+  static final MaterialColor _accentColor =
+      _createMaterialColor(const Color(0x001db9a2));
+
   MaterialColor get accentColor => _accentColor;
 
+  // buttons
+  static final _unselectedElevation = 1.5;
+  static final _selectedColor = Colors.grey[200];
+  static final _selectedElevation = 0.1;
+
+  static final ButtonStyle _unselectedElevatedButtonStyle =
+      ElevatedButton.styleFrom(elevation: _unselectedElevation);
+
+  static final ButtonStyle _selectedElevatedButtonStyle =
+      ElevatedButton.styleFrom(
+          backgroundColor: _selectedColor, elevation: _selectedElevation);
+
+  double get unselectedElevation => _unselectedElevation;
+  Color? get selectedColor => _selectedColor;
+  double get selectedElevation => _selectedElevation;
+  ButtonStyle get unselectedElevatedButtonStyle =>
+      _unselectedElevatedButtonStyle;
+  ButtonStyle get selectedElevatedButtonStyle => _selectedElevatedButtonStyle;
+
+  // helper functions:
   static MaterialColor _createMaterialColor(Color color) {
     List strengths = <double>[.05];
     final swatch = <int, Color>{};

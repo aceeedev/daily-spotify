@@ -5,14 +5,14 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/widgets/card_view.dart';
 
-class StepFour extends StatefulWidget {
-  const StepFour({super.key});
+class TrackSelector extends StatefulWidget {
+  const TrackSelector({super.key});
 
   @override
-  State<StepFour> createState() => _StepFourState();
+  State<TrackSelector> createState() => _TrackSelectorState();
 }
 
-class _StepFourState extends State<StepFour> {
+class _TrackSelectorState extends State<TrackSelector> {
   List<Track> itemList = [];
 
   @override

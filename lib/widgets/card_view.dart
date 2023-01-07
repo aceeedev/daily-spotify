@@ -136,8 +136,10 @@ class _CustomCardState extends State<CustomCard> {
         }
       },
       child: Card(
-          color: widget.selected ? Colors.grey[200] : null,
-          elevation: widget.selected ? 0.0 : 1.5,
+          color: widget.selected ? Styles().selectedColor : null,
+          elevation: widget.selected
+              ? Styles().selectedElevation
+              : Styles().unselectedElevation,
           child: Padding(
             padding: const EdgeInsets.all(5.0),
             child: Column(children: [

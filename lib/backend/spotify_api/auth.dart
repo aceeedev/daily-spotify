@@ -75,7 +75,9 @@ Future<String?> requestUserAuth() async {
 /// API. The method automatically refreshes the access token if needed.
 ///
 /// Before using this function you must request the user's permission with the
-/// function [requestUserAuthWithPKCE] which is the [authCode].
+/// function [requestUserAuth] which is the [authCode].
+/// You can only pass null as the [authCode] if an access token has already
+/// initially been requested.
 Future<AccessToken> requestAccessToken(String? authCode) async {
   AccessToken? accessToken = await db.Auth.instance.getAccessToken();
 

@@ -1,6 +1,6 @@
 import 'dart:math';
-
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
+import './filter_by_genre.dart';
 
 /// Returns curated [Future<Map<String, dynamic>>] of the recommendation seeds
 /// to be used in [getRecommendations].
@@ -13,13 +13,53 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
     List<Artist> artistList,
     List<String> genreList,
     List<Track> trackList) async {
-  Map<String, List<dynamic>> seedMap = {};
+  // 0: artist, 1: genre, 2: track
+  int getMoreRecent = Random().nextInt(3);
 
-  seedMap['seedArtists'] = [randomElement(artistList)].cast<Artist>();
-  seedMap['seedGenres'] = [randomElement(genreList)].cast<String>();
-  seedMap['seedTracks'] = [randomElement(trackList)].cast<Track>();
+  List<Artist> seedArtists = [];
+  List<String> seedGenres = [];
+  List<Track> seedTracks = [];
 
-  return seedMap;
+  AccessToken accessToken = await requestAccessToken(null);
+
+  // artist seed
+  if (getMoreRecent == 0) {
+    List<Artist> artistList = await getUserTopItems(
+        accessToken: accessToken, type: Artist, timeRange: 'short_term');
+
+    seedArtists.add(artistList.first);
+  } else {
+    seedArtists.add(randomElement(artistList));
+  }
+
+  // genre seed
+  if (getMoreRecent == 1) {
+    List<Artist> artistList = await getUserTopItems(
+        accessToken: accessToken, type: Artist, timeRange: 'short_term');
+
+    List<String> genreList =
+        (await filterByGenre(accessToken, artistList)).keys.toList();
+
+    seedGenres.add(genreList.first);
+  } else {
+    seedGenres.add(randomElement(genreList));
+  }
+
+  // track seed
+  if (getMoreRecent == 2) {
+    List<Track> trackList = await getUserTopItems(
+        accessToken: accessToken, type: Track, timeRange: 'short_term');
+
+    seedTracks.add(trackList.first);
+  } else {
+    seedTracks.add(randomElement(trackList));
+  }
+
+  return {
+    'seedArtists': seedArtists,
+    'seedGenres': seedGenres,
+    'seedTracks': seedTracks,
+  };
 }
 
 dynamic randomElement(List<dynamic> list) {

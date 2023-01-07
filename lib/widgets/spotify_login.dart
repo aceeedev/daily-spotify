@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/providers/setup_provider.dart';
+import 'package:daily_spotify/styles.dart';
 
-class StepOne extends StatefulWidget {
-  const StepOne({super.key});
+class SpotifyLogin extends StatefulWidget {
+  const SpotifyLogin({super.key});
 
   @override
-  State<StepOne> createState() => _StepOneState();
+  State<SpotifyLogin> createState() => _SpotifyLoginState();
 }
 
-class _StepOneState extends State<StepOne> {
+class _SpotifyLoginState extends State<SpotifyLogin> {
   bool loggedIn = false;
 
   @override
@@ -38,9 +39,8 @@ class _StepOneState extends State<StepOne> {
               }
             },
             style: loggedIn
-                ? ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[200], elevation: 0.0)
-                : ElevatedButton.styleFrom(elevation: 1.5),
+                ? Styles().selectedElevatedButtonStyle
+                : Styles().unselectedElevatedButtonStyle,
             child: const Text('Login with Spotify'),
           ),
         ),

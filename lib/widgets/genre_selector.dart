@@ -1,18 +1,19 @@
-import 'package:daily_spotify/backend/spotify_api/get_available_genre_seeds.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
+import 'package:daily_spotify/utils/filter_by_genre.dart';
+import 'package:daily_spotify/styles.dart';
 
-class StepTwo extends StatefulWidget {
-  const StepTwo({super.key});
+class GenreSelector extends StatefulWidget {
+  const GenreSelector({super.key});
 
   @override
-  State<StepTwo> createState() => _StepTwoState();
+  State<GenreSelector> createState() => _GenreSelectorState();
 }
 
-class _StepTwoState extends State<StepTwo> {
+class _GenreSelectorState extends State<GenreSelector> {
   @override
   void initState() {
     super.initState();
@@ -47,28 +48,7 @@ class _StepTwoState extends State<StepTwo> {
     if (!mounted) return;
     context.read<SetupForm>().addAllToTotalArtistList(artistList);
 
-    Map<String, int> genresMap = {};
-    for (Artist artist in artistList) {
-      artist.genres!.toList().forEach((genre) {
-        if (genresMap[genre] == null) {
-          genresMap[genre] = 1;
-        } else {
-          genresMap[genre] = genresMap[genre]! + 1;
-        }
-      });
-    }
-
-    // remove genres that are not able to be used as a recommendation
-    List<String> availableSeedGenres =
-        await getAvailableGenreSeeds(accessToken: accessToken);
-
-    genresMap = genresMap
-        .map((key, value) => MapEntry(key.replaceAll(' ', '-'), value));
-    genresMap.removeWhere((key, value) => !availableSeedGenres.contains(key));
-
-    // sort by descending value of number of times it appears in an artist
-    genresMap = Map.fromEntries(genresMap.entries.toList()
-      ..sort((e1, e2) => e2.value.compareTo(e1.value)));
+    Map<String, int> genresMap = await filterByGenre(accessToken, artistList);
 
     if (!mounted) return;
     context.read<SetupForm>().addAllToTotalGenreList(genresMap.keys.toList());
@@ -132,9 +112,8 @@ class _GenreButtonState extends State<GenreButton> {
             }
           },
           style: widget.selected
-              ? ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[200], elevation: 0.0)
-              : ElevatedButton.styleFrom(elevation: 1.5),
+              ? Styles().selectedElevatedButtonStyle
+              : Styles().unselectedElevatedButtonStyle,
           child: Text(widget.genre.replaceAll('-', ' '))),
     );
   }
