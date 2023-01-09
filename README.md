@@ -1,16 +1,12 @@
-# daily_spotify
+# Your Pitch -- daily_spotify
 
-A new Flutter project.
+An app that recommends a curated and customizable daily song and stores the song in a calendar.
 
-## Getting Started
+## How does it work?
 
-This project is a starting point for a Flutter application.
+The app is built with flutter to help speed up the process of developing a cross platform app.
 
-A few resources to get you started if this is your first Flutter project:
+The app utilizes Spotify's Web API to collect information on the user and uses this information to find a song to recommend.
+To communicate with Spotify's WEB API I created my own API wrapper.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+All data is stored in a local database with the help of hive db.

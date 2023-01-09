@@ -24,24 +24,26 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
           'First we need to personalize your music taste by viewing your Spotify account',
           textAlign: TextAlign.center,
         ),
-        Center(
-          child: ElevatedButton(
-            onPressed: () async {
-              String? authCode = await spotify_auth.requestUserAuth();
+        Expanded(
+          child: Center(
+            child: ElevatedButton(
+              onPressed: () async {
+                String? authCode = await spotify_auth.requestUserAuth();
 
-              if (authCode != null) {
-                // get initial access token
-                await spotify_auth.requestAccessToken(authCode);
+                if (authCode != null) {
+                  // get initial access token
+                  await spotify_auth.requestAccessToken(authCode);
 
-                if (!mounted) return;
-                context.read<SetupForm>().setFinishedStep(true);
-                setState(() => loggedIn = true);
-              }
-            },
-            style: loggedIn
-                ? Styles().selectedElevatedButtonStyle
-                : Styles().unselectedElevatedButtonStyle,
-            child: const Text('Login with Spotify'),
+                  if (!mounted) return;
+                  context.read<SetupForm>().setFinishedStep(true);
+                  setState(() => loggedIn = true);
+                }
+              },
+              style: loggedIn
+                  ? Styles().selectedElevatedButtonStyle
+                  : Styles().unselectedElevatedButtonStyle,
+              child: const Text('Login with Spotify'),
+            ),
           ),
         ),
       ],

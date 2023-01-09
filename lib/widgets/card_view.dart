@@ -21,8 +21,8 @@ class _CardViewState extends State<CardView> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, childAspectRatio: 7 / 8),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, childAspectRatio: widget.type == Artist ? 7 / 8 : 7 / 9),
       itemCount: widget.itemList.length,
       itemBuilder: (context, index) {
         dynamic item = widget.itemList[index];

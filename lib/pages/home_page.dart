@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/pages/calendar_page.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
+import 'package:daily_spotify/widgets/brand_text.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
 
@@ -18,52 +20,75 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Home Page'),
-        ),
         body: Frame(
+            showLogo: false,
             child: FutureBuilder(
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                return Center(
-                    child: Text('An error has occurred, ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                DailyTrack dailyTrack = snapshot.data as DailyTrack;
-                Track track = dailyTrack.track;
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return Center(
+                        child:
+                            Text('An error has occurred, ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    DailyTrack dailyTrack = snapshot.data as DailyTrack;
+                    Track track = dailyTrack.track;
 
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                          padding: const EdgeInsets.only(bottom: 15.0),
-                          child: Text(
-                              'Your song of ${DateFormat('MMM d').format(dailyTrack.date)}',
-                              style: Styles().largeText)),
-                      Image.network(
-                        track.images[1].url,
-                        width: track.images[1].width.toDouble(),
-                        height: track.images[1].height.toDouble(),
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const CalendarPage())),
+                                icon: const Icon(Icons.calendar_month),
+                              ),
+                              const BrandText(),
+                              // TODO: add settings
+                              IconButton(
+                                onPressed: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const CalendarPage())),
+                                icon: Icon(
+                                  Icons.settings,
+                                  color: ThemeData().scaffoldBackgroundColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.only(bottom: 15.0),
+                              child: Text(
+                                  'Your song of ${DateFormat('MMM d').format(dailyTrack.date)}',
+                                  style: Styles().largeText)),
+                          Image.network(
+                            track.images[1].url,
+                            width: track.images[1].width.toDouble(),
+                            height: track.images[1].height.toDouble(),
+                          ),
+                          Text(
+                            track.name,
+                            style: Styles().titleText,
+                          ),
+                          Text(
+                            track.getArtists(),
+                            style: Styles().subtitleText,
+                          )
+                        ],
                       ),
-                      Text(
-                        track.name,
-                        style: Styles().titleText,
-                      ),
-                      Text(
-                        track.getArtists(),
-                        style: Styles().subtitleText,
-                      )
-                    ],
-                  ),
-                );
-              }
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
-          future: getDailyTrack(),
-        )));
+                    );
+                  }
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+              future: getDailyTrack(),
+            )));
   }
 
   Future<DailyTrack> getDailyTrack() async {

@@ -46,12 +46,16 @@ class _GenreSelectorState extends State<GenreSelector> {
         await getUserTopItems(accessToken: accessToken, type: Artist);
 
     if (!mounted) return;
-    context.read<SetupForm>().addAllToTotalArtistList(artistList);
+    if (context.read<SetupForm>().totalArtistList.isEmpty) {
+      context.read<SetupForm>().addAllToTotalArtistList(artistList);
+    }
 
     Map<String, int> genresMap = await filterByGenre(accessToken, artistList);
 
     if (!mounted) return;
-    context.read<SetupForm>().addAllToTotalGenreList(genresMap.keys.toList());
+    if (context.read<SetupForm>().totalGenreList.isEmpty) {
+      context.read<SetupForm>().addAllToTotalGenreList(genresMap.keys.toList());
+    }
     context.read<SetupForm>().setFinishedStep(true);
   }
 

@@ -27,11 +27,10 @@ class _SetupPageState extends State<SetupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lets Setup'),
-      ),
       body: Frame(
+        showLogo: true,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(child: stepWidgets[context.watch<SetupForm>().step]),
             Align(

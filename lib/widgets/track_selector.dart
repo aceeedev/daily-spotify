@@ -41,7 +41,9 @@ class _TrackSelectorState extends State<TrackSelector> {
         await getUserTopItems(accessToken: accessToken, type: Track);
 
     if (!mounted) return null;
-    context.read<SetupForm>().addAllToTotalTrackList(totalTrackList);
+    if (context.read<SetupForm>().totalTrackList.isEmpty) {
+      context.read<SetupForm>().addAllToTotalTrackList(totalTrackList);
+    }
 
     List<Track> newItemList = [];
     for (int i = 0; i < totalTrackList.length; i++) {

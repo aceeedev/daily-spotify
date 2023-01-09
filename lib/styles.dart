@@ -6,6 +6,7 @@ class Styles {
   static const _textSizeTitle = 18.0;
   static const _textSizeSubtitle = 14.0;
   static const _textSizeLarge = 24.0;
+  static const _textSizeBrand = 26.0;
 
   final TextStyle _defaultText = const TextStyle(
     fontSize: _textSizeDefault,
@@ -27,10 +28,23 @@ class Styles {
     fontWeight: FontWeight.w600,
   );
 
+  final TextStyle _calendarText = const TextStyle(fontSize: _textSizeTitle);
+
+  final TextStyle _calendarTextIfImage =
+      const TextStyle(fontSize: _textSizeTitle, color: Colors.white);
+
+  final TextStyle _brandText = const TextStyle(
+    fontSize: _textSizeBrand,
+    fontWeight: FontWeight.w800,
+  );
+
   TextStyle get defaultText => _defaultText;
   TextStyle get titleText => _titleText;
   TextStyle get subtitleText => _subtitleText;
   TextStyle get largeText => _largeText;
+  TextStyle get calendarText => _calendarText;
+  TextStyle get calendarTextIfImage => _calendarTextIfImage;
+  TextStyle get brandText => _brandText;
 
   // color:
   static final MaterialColor _accentColor =
@@ -39,9 +53,9 @@ class Styles {
   MaterialColor get accentColor => _accentColor;
 
   // buttons
-  static final _unselectedElevation = 1.5;
+  static const _unselectedElevation = 1.5;
   static final _selectedColor = Colors.grey[200];
-  static final _selectedElevation = 0.1;
+  static const _selectedElevation = 0.1;
 
   static final ButtonStyle _unselectedElevatedButtonStyle =
       ElevatedButton.styleFrom(elevation: _unselectedElevation);
