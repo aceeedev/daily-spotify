@@ -25,8 +25,11 @@ class _GenreSelectorState extends State<GenreSelector> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Pick your top three favorite genres',
-            textAlign: TextAlign.center),
+        Text(
+          'Pick your top three favorite genres',
+          textAlign: TextAlign.center,
+          style: Styles().subtitleText,
+        ),
         Expanded(
           child: SingleChildScrollView(
             child: Wrap(

@@ -11,7 +11,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Daily Spotify',
-        theme: ThemeData(primarySwatch: Colors.green, useMaterial3: true),
+        theme: Styles().themeData,
+        debugShowCheckedModeBanner: false,
         home: FutureBuilder(
             builder: ((context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {

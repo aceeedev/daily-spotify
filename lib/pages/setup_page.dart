@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
+import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/pages/home_page.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/spotify_login.dart';
@@ -124,8 +125,10 @@ class NextOrPreviousStepButton extends StatelessWidget {
                 }
               },
               icon: Icon(
-                  nextOrPrevious ? Icons.navigate_next : Icons.navigate_before,
-                  size: 40.0))
+                nextOrPrevious ? Icons.navigate_next : Icons.navigate_before,
+                size: 40.0,
+                color: Styles().mainColor,
+              ))
           : const SizedBox.shrink(),
     );
   }

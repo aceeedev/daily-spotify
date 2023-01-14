@@ -23,5 +23,8 @@ void main() async {
 
   runApp(MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => SetupForm())],
-      child: const MaterialApp(home: MyApp())));
+      child: const MaterialApp(
+        home: MyApp(),
+        debugShowCheckedModeBanner: false,
+      )));
 }

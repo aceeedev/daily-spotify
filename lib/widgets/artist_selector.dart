@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/widgets/card_view.dart';
+import 'package:daily_spotify/styles.dart';
 
 class ArtistSelector extends StatefulWidget {
   const ArtistSelector({super.key});
@@ -25,9 +26,10 @@ class _ArtistSelectorState extends State<ArtistSelector> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
+        Text(
           'Pick your top three favorite artists',
           textAlign: TextAlign.center,
+          style: Styles().subtitleText,
         ),
         Expanded(child: CardView(itemList: itemList, type: Artist)),
       ],

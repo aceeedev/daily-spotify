@@ -4,6 +4,7 @@ import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/widgets/card_view.dart';
+import 'package:daily_spotify/styles.dart';
 
 class TrackSelector extends StatefulWidget {
   const TrackSelector({super.key});
@@ -26,9 +27,10 @@ class _TrackSelectorState extends State<TrackSelector> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          'pick your top three favorite songs',
+        Text(
+          'Pick your top three favorite songs',
           textAlign: TextAlign.center,
+          style: Styles().subtitleText,
         ),
         Expanded(child: CardView(itemList: itemList, type: Track)),
       ],

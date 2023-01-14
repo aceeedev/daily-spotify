@@ -17,7 +17,12 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar'),
+        title: Text(
+          'Calendar',
+          style: Styles().largeText,
+        ),
+        backgroundColor: Styles().backgroundColor,
+        leading: BackButton(color: Styles().mainColor),
       ),
       body: Frame(
         showLogo: false,
@@ -128,6 +133,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
           if (dailyTrack.date.day == index + 1) {
             dailyTrackIndex++;
             return Card(
+                color: Styles().backgroundColor,
                 semanticContainer: true,
                 child: Stack(children: [
                   ClipRRect(
@@ -140,11 +146,10 @@ class _MonthCalendarState extends State<MonthCalendar> {
                 ]));
           }
         }
-        return Card(
-            child: CalendarText(
+        return CalendarText(
           index: index,
           containsImage: false,
-        ));
+        );
       },
     );
   }

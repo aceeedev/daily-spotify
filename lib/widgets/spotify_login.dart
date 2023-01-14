@@ -20,9 +20,10 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text(
-          'First we need to personalize your music taste by viewing your Spotify account',
+        Text(
+          'Let\'s personalize your music by checking out your Spotify',
           textAlign: TextAlign.center,
+          style: Styles().subtitleText,
         ),
         Expanded(
           child: Center(

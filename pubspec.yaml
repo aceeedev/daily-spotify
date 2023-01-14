@@ -44,6 +44,7 @@ dependencies:
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.0
   intl: ^0.18.0
+  image: ^4.0.8
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +63,11 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+  fonts:
+    - family: WorkSans
+      fonts:
+        - asset: assets\fonts\WorkSans-VariableFont_wght.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

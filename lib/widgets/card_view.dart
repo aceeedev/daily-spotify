@@ -22,7 +22,8 @@ class _CardViewState extends State<CardView> {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, childAspectRatio: widget.type == Artist ? 7 / 8 : 7 / 9),
+          crossAxisCount: 2,
+          childAspectRatio: widget.type == Artist ? 7 / 8 : 7 / 9),
       itemCount: widget.itemList.length,
       itemBuilder: (context, index) {
         dynamic item = widget.itemList[index];
@@ -136,10 +137,13 @@ class _CustomCardState extends State<CustomCard> {
         }
       },
       child: Card(
-          color: widget.selected ? Styles().selectedColor : null,
+          color: widget.selected
+              ? Styles().selectedColor
+              : Styles().secondaryColor,
           elevation: widget.selected
               ? Styles().selectedElevation
               : Styles().unselectedElevation,
+          shadowColor: Styles().shadowColor,
           child: Padding(
             padding: const EdgeInsets.all(5.0),
             child: Column(children: [
