@@ -52,8 +52,11 @@ class _CalendarPageState extends State<CalendarPage> {
                 }
 
                 // go through and sort the daily tracks by month and year
-                List<List<DailyTrack>> dailyTracksByMonth =
-                    List.filled(monthsBetweenFirstDailyTrackAndNow.length, []);
+                List<List<DailyTrack>> dailyTracksByMonth = [];
+                for (DateTime month in monthsBetweenFirstDailyTrackAndNow) {
+                  dailyTracksByMonth.add([]);
+                }
+
                 int i = 0;
                 for (DailyTrack dailyTrack in allDailyTracksList) {
                   if (dailyTrack.date.month ==
@@ -63,7 +66,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     dailyTracksByMonth[i].add(dailyTrack);
                   } else {
                     while (dailyTrack.date.month !=
-                            monthsBetweenFirstDailyTrackAndNow[i].month &&
+                            monthsBetweenFirstDailyTrackAndNow[i].month ||
                         dailyTrack.date.year !=
                             monthsBetweenFirstDailyTrackAndNow[i].year) {
                       i++;

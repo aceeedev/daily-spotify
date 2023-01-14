@@ -46,12 +46,13 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
   }
 
   // track seed
-  if (getMoreRecent == 2) {
-    List<Track> trackList = await getUserTopItems(
-        accessToken: accessToken, type: Track, timeRange: 'short_term');
+  List<Track> trackList = await getUserTopItems(
+      accessToken: accessToken, type: Track, timeRange: 'short_term');
 
-    seedTracks.add(trackList.first);
+  if (getMoreRecent == 2) {
+    seedTracks = trackList.sublist(0, 2);
   } else {
+    seedTracks.add(trackList.first);
     seedTracks.add(randomElement(trackList));
   }
 

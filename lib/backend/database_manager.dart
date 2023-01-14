@@ -77,6 +77,12 @@ class Tracks {
   Future<DailyTrack?> getDailyTrack(DateTime date) async =>
       (await box).get(DateFormat.yMd().format(date));
 
-  Future<List<DailyTrack>> getAllDailyTracks() async =>
-      (await box).values.cast<DailyTrack>().toList();
+  Future<List<DailyTrack>> getAllDailyTracks() async {
+    List<DailyTrack> allDailyTracks =
+        (await box).values.cast<DailyTrack>().toList();
+
+    allDailyTracks.sort((a, b) => a.date.compareTo(b.date));
+
+    return allDailyTracks;
+  }
 }
