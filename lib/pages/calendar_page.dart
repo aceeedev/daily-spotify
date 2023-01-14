@@ -120,17 +120,27 @@ class _MonthCalendarState extends State<MonthCalendar> {
 
   @override
   Widget build(BuildContext context) {
+    int year = widget.monthlyDateTime.year;
+    int month = widget.monthlyDateTime.month;
+
+    int monthOffset = DateUtils.firstDayOffset(
+        year, month, const DefaultMaterialLocalizations());
+
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: getDaysInMonth(
-          widget.monthlyDateTime.year, widget.monthlyDateTime.month),
+      itemCount: DateUtils.getDaysInMonth(year, month) + monthOffset,
       gridDelegate:
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
       itemBuilder: (context, index) {
+        // account for the month's date offset, add empty entries
+        if (index < monthOffset) {
+          return const SizedBox.shrink();
+        }
+
         if (widget.dailyTracksThisMonth.length - 1 >= dailyTrackIndex) {
           DailyTrack? dailyTrack = widget.dailyTracksThisMonth[dailyTrackIndex];
-          if (dailyTrack.date.day == index + 1) {
+          if (dailyTrack.date.day == (index - monthOffset) + 1) {
             dailyTrackIndex++;
             return Card(
                 color: Styles().backgroundColor,
@@ -140,43 +150,18 @@ class _MonthCalendarState extends State<MonthCalendar> {
                       borderRadius: BorderRadius.circular(12.0),
                       child: Image.network(dailyTrack.track.images.first.url)),
                   CalendarText(
-                    index: index,
+                    index: index - monthOffset,
                     containsImage: true,
                   )
                 ]));
           }
         }
         return CalendarText(
-          index: index,
+          index: index - monthOffset,
           containsImage: false,
         );
       },
     );
-  }
-
-  /// Returns the number of days in a month based on the [year] and [month].
-  /// Taken from the DateUtils package
-  static int getDaysInMonth(int year, int month) {
-    if (month == DateTime.february) {
-      final bool isLeapYear =
-          (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0);
-      return isLeapYear ? 29 : 28;
-    }
-    const List<int> daysInMonth = <int>[
-      31,
-      -1,
-      31,
-      30,
-      31,
-      30,
-      31,
-      31,
-      30,
-      31,
-      30,
-      31
-    ];
-    return daysInMonth[month - 1];
   }
 }
 

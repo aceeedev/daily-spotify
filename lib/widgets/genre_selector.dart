@@ -70,11 +70,13 @@ class _GenreSelectorState extends State<GenreSelector> {
 
       // add the top three genres as selected
       if (i <= 2) {
-        genreButtons.add(GenreButton(genre: genre, selected: true));
         context.read<SetupForm>().addToSelectedGenreList(genre);
-      } else {
-        genreButtons.add(GenreButton(genre: genre));
       }
+
+      genreButtons.add(GenreButton(
+          genre: genre,
+          selected:
+              context.read<SetupForm>().selectedGenreList.contains(genre)));
     }
 
     return genreButtons;
@@ -82,7 +84,7 @@ class _GenreSelectorState extends State<GenreSelector> {
 }
 
 class GenreButton extends StatefulWidget {
-  GenreButton({super.key, required this.genre, this.selected = false});
+  GenreButton({super.key, required this.genre, required this.selected});
 
   final String genre;
   bool selected;

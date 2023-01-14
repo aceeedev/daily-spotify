@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/pages/calendar_page.dart';
+import 'package:daily_spotify/pages/settings_page.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/brand_text.dart';
@@ -77,12 +78,11 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 const BrandText(),
-                                // TODO: add settings
                                 IconButton(
                                   onPressed: () => Navigator.of(context).push(
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const CalendarPage())),
+                                              const SettingsPage())),
                                   icon: Icon(
                                     Icons.settings,
                                     color: Styles().mainColor,
@@ -103,10 +103,12 @@ class _HomePageState extends State<HomePage> {
                             Text(
                               track.name,
                               style: Styles().titleText,
+                              textAlign: TextAlign.center,
                             ),
                             Text(
                               track.getArtists(),
                               style: Styles().subtitleText,
+                              textAlign: TextAlign.center,
                             )
                           ],
                         ),
