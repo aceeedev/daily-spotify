@@ -64,9 +64,6 @@ Future<String?> requestUserAuth() async {
 
     return queryResult['code'];
   } catch (e) {
-    print(e);
-    print('Error, user cancelled auth.');
-
     return null;
   }
 }

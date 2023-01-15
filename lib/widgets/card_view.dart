@@ -59,6 +59,7 @@ class _CardViewState extends State<CardView> {
   }
 }
 
+// ignore: must_be_immutable
 class CustomCard extends StatefulWidget {
   CustomCard(
       {super.key,

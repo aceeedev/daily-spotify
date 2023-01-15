@@ -48,7 +48,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     List<SpotifyImage> trackImageList =
                         ((snapshot.data as Map<String, dynamic>)['trackList']
                                 as List<Track>)
-                            .map((e) => e.images!.last)
+                            .map((e) => e.images.last)
                             .toList();
 
                     return Center(
@@ -98,6 +98,24 @@ class _SettingsPageState extends State<SettingsPage> {
 
                                 setState(() {});
                               },
+                            ),
+                            const Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Inspired by ella ',
+                                  style: Styles().subtitleText,
+                                ),
+                                Icon(
+                                  Icons.favorite,
+                                  color: Styles().mainColor,
+                                ),
+                                Text(
+                                  ' Created by andrew',
+                                  style: Styles().subtitleText,
+                                )
+                              ],
                             )
                           ]),
                     );

@@ -102,8 +102,9 @@ class NextOrPreviousStepButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(!nextOrPrevious ? paddingSize : 0, 0,
-          nextOrPrevious ? paddingSize : 0, 0),
+      padding: EdgeInsets.only(
+          left: !nextOrPrevious ? paddingSize : 0,
+          right: nextOrPrevious ? paddingSize : 0),
       child: !nextOrPrevious || context.watch<SetupForm>().finishedStep
           ? IconButton(
               onPressed: () async {

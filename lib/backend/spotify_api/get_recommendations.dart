@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 
@@ -64,7 +63,6 @@ Future<Recommendation> getRecommendations({
   queryParameters.removeWhere((key, value) => value == null);
   queryParameters =
       queryParameters.map((key, value) => MapEntry(key, value.toString()));
-  print(queryParameters);
 
   final url =
       Uri.https('api.spotify.com', '/v1/recommendations', queryParameters);
