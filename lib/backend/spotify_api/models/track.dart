@@ -13,14 +13,17 @@ class Track {
   @HiveField(2)
   String uri;
   @HiveField(3)
-  List<Artist> artists;
+  String spotifyHref;
   @HiveField(4)
+  List<Artist> artists;
+  @HiveField(5)
   List<SpotifyImage> images;
 
   Track(
       {required this.id,
       required this.name,
       required this.uri,
+      required this.spotifyHref,
       required this.artists,
       required this.images});
 

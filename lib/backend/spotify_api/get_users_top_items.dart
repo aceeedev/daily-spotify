@@ -39,6 +39,7 @@ Future<dynamic> getUserTopItems(
             id: item['id'],
             name: item['name'],
             uri: item['uri'],
+            spotifyHref: item['external_urls']['spotify'],
             artists: (item['artists'] as List<dynamic>)
                 .map((e) => Artist(
                     id: e['id'],

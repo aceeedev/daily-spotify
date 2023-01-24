@@ -20,15 +20,16 @@ class TrackAdapter extends TypeAdapter<Track> {
       id: fields[0] as String,
       name: fields[1] as String,
       uri: fields[2] as String,
-      artists: (fields[3] as List).cast<Artist>(),
-      images: (fields[4] as List).cast<SpotifyImage>(),
+      spotifyHref: fields[3] as String,
+      artists: (fields[4] as List).cast<Artist>(),
+      images: (fields[5] as List).cast<SpotifyImage>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Track obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -36,8 +37,10 @@ class TrackAdapter extends TypeAdapter<Track> {
       ..writeByte(2)
       ..write(obj.uri)
       ..writeByte(3)
-      ..write(obj.artists)
+      ..write(obj.spotifyHref)
       ..writeByte(4)
+      ..write(obj.artists)
+      ..writeByte(5)
       ..write(obj.images);
   }
 

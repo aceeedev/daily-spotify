@@ -3,7 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/widgets/frame_widget.dart';
+import 'package:daily_spotify/widgets/track_view.dart';
+import 'package:daily_spotify/widgets/brand_text.dart';
 import 'package:daily_spotify/styles.dart';
+import 'package:daily_spotify/utils/get_average_color.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -145,18 +148,53 @@ class _MonthCalendarState extends State<MonthCalendar> {
           DailyTrack? dailyTrack = widget.dailyTracksThisMonth[dailyTrackIndex];
           if (dailyTrack.date.day == (index - monthOffset) + 1) {
             dailyTrackIndex++;
-            return Card(
-                color: Styles().backgroundColor,
-                semanticContainer: true,
-                child: Stack(children: [
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(12.0),
-                      child: Image.network(dailyTrack.track.images.first.url)),
-                  CalendarText(
-                    index: index - monthOffset,
-                    containsImage: true,
-                  )
-                ]));
+            return GestureDetector(
+              onTap: () async {
+                Color averageColor =
+                    await getAverageColor(dailyTrack.track.images.last.url);
+
+                if (!mounted) return;
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Scaffold(
+                          body: Frame(
+                            showLogo: false,
+                            child: TrackView(
+                                header: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      icon: Icon(
+                                        Icons.arrow_back,
+                                        color: Styles().mainColor,
+                                      ),
+                                    ),
+                                    const BrandText(),
+                                    const SizedBox(width: 24.0)
+                                  ],
+                                ),
+                                dailyTrack: dailyTrack,
+                                track: dailyTrack.track,
+                                averageColorOfImage: averageColor),
+                          ),
+                        )));
+              },
+              child: Card(
+                  color: Styles().backgroundColor,
+                  semanticContainer: true,
+                  child: Stack(children: [
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child:
+                            Image.network(dailyTrack.track.images.first.url)),
+                    CalendarText(
+                      index: index - monthOffset,
+                      containsImage: true,
+                    )
+                  ])),
+            );
           }
         }
         return CalendarText(

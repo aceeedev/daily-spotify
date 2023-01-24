@@ -9,6 +9,8 @@ import 'package:daily_spotify/widgets/genre_selector.dart';
 import 'package:daily_spotify/widgets/artist_selector.dart';
 import 'package:daily_spotify/widgets/track_selector.dart';
 
+import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -99,6 +101,50 @@ class _SettingsPageState extends State<SettingsPage> {
                                 setState(() {});
                               },
                             ),
+                            // DEVELOPER DEBUG, TODO: REMOVE BEFORE RELEASE
+                            TextButton(
+                                onPressed: () async {
+                                  AccessToken accessToken =
+                                      await requestAccessToken(null);
+                                  List<Artist> initialSeedArtists = await db
+                                      .Config.instance
+                                      .getArtistConfig();
+                                  List<String> initialSeedGenres =
+                                      await db.Config.instance.getGenreConfig();
+                                  List<Track> initialSeedTracks =
+                                      await db.Config.instance.getTrackConfig();
+
+                                  Map<String, dynamic> seeds =
+                                      await getRecommendationSeeds(
+                                          initialSeedArtists,
+                                          initialSeedGenres,
+                                          initialSeedTracks);
+
+                                  Recommendation recommendation =
+                                      await getRecommendations(
+                                          accessToken: accessToken,
+                                          seedArtists: seeds['seedArtists']
+                                              as List<Artist>,
+                                          seedGenres: seeds['seedGenres']
+                                              as List<String>,
+                                          seedTracks: seeds['seedTracks']
+                                              as List<Track>,
+                                          maxPopularity: 75);
+
+                                  print(
+                                      '${recommendation.tracks.length} Recommendations');
+                                  print('genre seeds: ${seeds['seedGenres']}');
+                                  print(
+                                      'artist seeds: ${(seeds['seedArtists'] as List<Artist>).map((e) => e.name).toList().join(', ')}');
+                                  print(
+                                      'track seeds: ${(seeds['seedTracks'] as List<Track>).map((e) => e.name).toList().join(', ')}');
+                                  print(recommendation.tracks.first.name);
+                                  print(
+                                      recommendation.tracks.first.getArtists());
+                                  print('\n');
+                                },
+                                child: const Text(
+                                    'Generate a new recommendation')),
                             const Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -204,6 +250,7 @@ class SettingsListView extends StatelessWidget {
                       e.url,
                       height: 64.0,
                       width: 64.0,
+                      fit: BoxFit.cover,
                     ),
                   ))
               .toList();

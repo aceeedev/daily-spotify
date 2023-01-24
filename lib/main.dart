@@ -15,6 +15,8 @@ void main() async {
   // Initialize Hive
   await Hive.initFlutter();
   // Register all custom objects in database, cant loop through
+  // to register new TypeAdapters use:
+  //   flutter packages pub run build_runner build
   Hive.registerAdapter(AccessTokenAdapter());
   Hive.registerAdapter(ArtistAdapter());
   Hive.registerAdapter(SpotifyImageAdapter());
