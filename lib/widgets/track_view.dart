@@ -50,19 +50,10 @@ class TrackView extends StatelessWidget {
                 child: Text(
                     'Your song of ${DateFormat('MMM d').format(dailyTrack.date)}',
                     style: Styles().largeText)),
-            GestureDetector(
-              onTap: () async {
-                Uri url = Uri.parse(track.spotifyHref);
-
-                if (!await launchUrl(url)) {
-                  throw Exception('Could not launch $url');
-                }
-              },
-              child: Image.network(
-                track.images.first.url,
-                width: track.images.first.width.toDouble() / 2,
-                height: track.images.first.height.toDouble() / 2,
-              ),
+            Image.network(
+              track.images.first.url,
+              width: track.images.first.width.toDouble() / 2,
+              height: track.images.first.height.toDouble() / 2,
             ),
             Text(
               track.name,
@@ -73,10 +64,25 @@ class TrackView extends StatelessWidget {
               track.getArtists(),
               style: Styles().subtitleText,
               textAlign: TextAlign.center,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 24),
+              child: IconButton(
+                  onPressed: () async => await openSong(track.spotifyHref),
+                  icon: Icon(Icons.play_circle,
+                      color: Styles().mainColor, size: 72.0)),
             )
           ],
         ),
       ),
     );
+  }
+
+  Future openSong(String spotifyHref) async {
+    Uri url = Uri.parse(spotifyHref);
+
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 }

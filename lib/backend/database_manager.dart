@@ -25,6 +25,11 @@ class Auth {
       (await box).put('accessToken', accessToken);
 
   Future<AccessToken?> getAccessToken() async => (await box).get('accessToken');
+
+  Future<void> saveCodeVerifier(String codeVerifier) async =>
+      (await box).put('codeVerifier', codeVerifier);
+
+  Future<String> getCodeVerifier() async => (await box).get('codeVerifier');
 }
 
 class Config {

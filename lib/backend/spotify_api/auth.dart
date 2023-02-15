@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter_web_auth/flutter_web_auth.dart';
-//import 'package:crypto/crypto.dart';
+import 'package:crypto/crypto.dart';
 import 'package:daily_spotify/secrets.dart' as secrets;
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
@@ -20,9 +20,14 @@ String _getRandomString(int length) {
 
 String _getAuthUrl(String redirectUri, String state) {
   const scope = 'user-top-read user-read-recently-played';
-  redirectUri += '://';
-  //final codeVerifier = _getRandomString(100);
-  //final codeChallenge = sha256.convert(utf8.encode(codeVerifier)).toString();
+  redirectUri += '://callback';
+  final codeVerifier = _getRandomString(100);
+  final hash = sha256.convert(ascii.encode(codeVerifier));
+  final codeChallenge = base64Url
+      .encode(hash.bytes)
+      .replaceAll("=", "")
+      .replaceAll("+", "-")
+      .replaceAll("/", "_");
 
   final queryParameters = {
     'response_type': 'code',
@@ -30,14 +35,15 @@ String _getAuthUrl(String redirectUri, String state) {
     'scope': scope,
     'redirect_uri': redirectUri,
     'state': state,
-    //'code_challenge_method': 'S256',
-    //'code_challenge': codeChallenge
+    'code_challenge_method': 'S256',
+    'code_challenge': codeChallenge,
   };
 
   final url = Uri.https('accounts.spotify.com', '/authorize', queryParameters)
       .toString();
 
-  // save codeVerifier
+  // save codeVerifier for later verification
+  db.Auth.instance.saveCodeVerifier(codeVerifier);
 
   return url;
 }
@@ -82,8 +88,10 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
     final url = Uri.https('accounts.spotify.com', '/api/token');
     final form = {
       'code': authCode,
-      'redirect_uri': '$_redirectUriScheme://',
-      'grant_type': 'authorization_code'
+      'redirect_uri': '$_redirectUriScheme://callback',
+      'grant_type': 'authorization_code',
+      'client_id': secrets.spotifyClientId,
+      'code_verifier': await db.Auth.instance.getCodeVerifier()
     };
     final headers = {
       'Authorization':
@@ -116,13 +124,10 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
       final url = Uri.https('accounts.spotify.com', '/api/token');
       final form = {
         'grant_type': 'refresh_token',
-        'refresh_token': accessToken.refreshToken
+        'refresh_token': accessToken.refreshToken,
+        'client_id': secrets.spotifyClientId
       };
-      final headers = {
-        'Authorization':
-            'Basic ${base64.encode(utf8.encode('${secrets.spotifyClientId}:${secrets.spotifyClientSecret}'))}',
-        'Content-Type': 'application/x-www-form-urlencoded'
-      };
+      final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
 
       final response =
           await http.Client().post(url, headers: headers, body: form);

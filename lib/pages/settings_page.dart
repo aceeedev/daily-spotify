@@ -258,9 +258,24 @@ class SettingsListView extends StatelessWidget {
         break;
       case List<String>:
         {
+          String itemsString = "";
+
+          if (items.isNotEmpty) {
+            // comma separated items
+            itemsString = items.join(', ').replaceAll('-', ' ');
+
+            // add ", and" to the last item if necessary
+            if (items.length > 1) {
+              int lastCommaIndex = itemsString.lastIndexOf(',');
+
+              itemsString =
+                  '${itemsString.substring(0, lastCommaIndex)}, and${itemsString.substring(lastCommaIndex + 1)}';
+            }
+          }
+
           currentSettings = [
             Text(
-              items.join(', ').replaceAll('-', ' '),
+              itemsString,
               style: Styles().defaultText,
             )
           ];
