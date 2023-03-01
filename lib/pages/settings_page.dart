@@ -4,6 +4,7 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/styles.dart';
+import 'package:daily_spotify/pages/donation_page.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/genre_selector.dart';
 import 'package:daily_spotify/widgets/artist_selector.dart';
@@ -27,6 +28,13 @@ class _SettingsPageState extends State<SettingsPage> {
             'Settings',
             style: Styles().largeText,
           ),
+          actions: [
+            TextButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => DonationPage())),
+                label: const Text('Donate'),
+                icon: const Icon(Icons.favorite_border))
+          ],
           backgroundColor: Styles().backgroundColor,
           leading: BackButton(color: Styles().mainColor),
         ),
@@ -238,8 +246,18 @@ class SettingsListView extends StatelessWidget {
     ]);
   }
 
-  dynamic getCurrentSettingsWidgets() {
-    dynamic currentSettings;
+  List<Widget> getCurrentSettingsWidgets() {
+    List<Widget> currentSettings;
+
+    if (items.isEmpty) {
+      return [
+        Text(
+          'None selected. We will select for you',
+          style: Styles().defaultText,
+        )
+      ];
+    }
+
     switch (items.runtimeType) {
       case List<SpotifyImage>:
         {

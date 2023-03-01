@@ -48,10 +48,12 @@ class _ArtistSelectorState extends State<ArtistSelector> {
           await getUserTopItems(accessToken: accessToken, type: Artist);
     }
 
+    if (!mounted) return;
+    bool selectedListIsOriginallyEmpty =
+        context.read<SetupForm>().selectedArtistList.isEmpty;
     List<Artist> newItemList = [];
     for (int i = 0; i < totalArtistList.length; i++) {
-      if (i <= 2) {
-        if (!mounted) return;
+      if (i <= 2 && selectedListIsOriginallyEmpty) {
         context.read<SetupForm>().addToSelectedArtistList(totalArtistList[i]);
       }
       newItemList.add(totalArtistList[i]);

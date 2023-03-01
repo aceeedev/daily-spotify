@@ -63,13 +63,15 @@ class _GenreSelectorState extends State<GenreSelector> {
   }
 
   List<Widget> getGenreButtons(List<String> genreList) {
+    bool selectedListIsOriginallyEmpty =
+        context.read<SetupForm>().selectedGenreList.isEmpty;
     List<GenreButton> genreButtons = [];
 
     for (int i = 0; i < genreList.length; i++) {
       String genre = genreList[i];
 
       // add the top three genres as selected
-      if (i <= 2) {
+      if (i <= 2 && selectedListIsOriginallyEmpty) {
         context.read<SetupForm>().addToSelectedGenreList(genre);
       }
 

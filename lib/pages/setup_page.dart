@@ -30,26 +30,29 @@ class _SetupPageState extends State<SetupPage> {
     return Scaffold(
       body: Frame(
         showLogo: true,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(child: stepWidgets[context.watch<SetupForm>().step]),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children:
-                      getNavigationStepButtons(context.read<SetupForm>().step)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: getStepCircleIcons(context.read<SetupForm>().step),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(child: stepWidgets[context.watch<SetupForm>().step]),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: getNavigationStepButtons(
+                        context.read<SetupForm>().step)),
               ),
-            )
-          ],
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: getStepCircleIcons(context.read<SetupForm>().step),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

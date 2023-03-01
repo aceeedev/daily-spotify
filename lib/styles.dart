@@ -41,6 +41,9 @@ class Styles {
       fontWeight: FontWeight.w500,
       color: _mainColor);
 
+  late final TextStyle _subtitleTextWithPrimaryColor =
+      _subtitleText.copyWith(color: _primarySwatch);
+
   final TextStyle _largeText = const TextStyle(
       fontSize: _textSizeLarge, fontWeight: FontWeight.w600, color: _mainColor);
 
@@ -54,6 +57,7 @@ class Styles {
       fontSize: _textSizeBrand, fontWeight: FontWeight.w900, color: _mainColor);
 
   TextStyle get defaultText => _defaultText;
+  TextStyle get subtitleTextWithPrimaryColor => _subtitleTextWithPrimaryColor;
   TextStyle get titleText => _titleText;
   TextStyle get subtitleText => _subtitleText;
   TextStyle get largeText => _largeText;

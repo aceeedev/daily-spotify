@@ -47,9 +47,11 @@ class _TrackSelectorState extends State<TrackSelector> {
       context.read<SetupForm>().addAllToTotalTrackList(totalTrackList);
     }
 
+    bool selectedListIsOriginallyEmpty =
+        context.read<SetupForm>().selectedTrackList.isEmpty;
     List<Track> newItemList = [];
     for (int i = 0; i < totalTrackList.length; i++) {
-      if (i <= 2) {
+      if (i <= 2 && selectedListIsOriginallyEmpty) {
         context.read<SetupForm>().addToSelectedTrackList(totalTrackList[i]);
       }
       newItemList.add(totalTrackList[i]);

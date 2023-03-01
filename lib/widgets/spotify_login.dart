@@ -21,7 +21,7 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Let\'s personalize your music by checking out your Spotify',
+          'Let\'s personalize your recommended music by checking out your Spotify',
           textAlign: TextAlign.center,
           style: Styles().subtitleText,
         ),
@@ -43,7 +43,22 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
               style: loggedIn
                   ? Styles().selectedElevatedButtonStyle
                   : Styles().unselectedElevatedButtonStyle,
-              child: const Text('Login with Spotify'),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        right: 8.0, top: 8.0, bottom: 8.0),
+                    child: Image.asset('assets/Spotify_Icon_RGB_Green.png',
+                        width: 32, height: 32),
+                  ),
+                  Text(
+                    'Login with Spotify',
+                    style: Styles().subtitleTextWithPrimaryColor,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
