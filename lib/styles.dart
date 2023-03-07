@@ -17,6 +17,7 @@ class Styles {
       useMaterial3: true);
 
   ThemeData get themeData => _themeData;
+  Color get primarySwatch => _primarySwatch;
   Color get mainColor => _mainColor;
   Color get secondaryColor => _secondaryColor;
   Color get backgroundColor => _backgroundColor;

@@ -19,7 +19,7 @@ String _getRandomString(int length) {
 }
 
 String _getAuthUrl(String redirectUri, String state) {
-  const scope = 'user-top-read user-read-recently-played';
+  const scope = 'user-top-read';
   redirectUri += '://callback';
   final codeVerifier = _getRandomString(100);
   final hash = sha256.convert(ascii.encode(codeVerifier));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/providers/setup_provider.dart';
@@ -62,6 +63,18 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
             ),
           ),
         ),
+        Text(
+          'Note: Any and all metadata and cover art data is provided by Spotify and their respective services.',
+          textAlign: TextAlign.center,
+          style: Styles().defaultText,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Image.asset(
+            'assets/Spotify_Logo_RGB_Green.png',
+            height: 48.0,
+          ),
+        )
       ],
     );
   }

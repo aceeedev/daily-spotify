@@ -1,3 +1,4 @@
+import 'package:daily_spotify/main.dart';
 import 'package:flutter/material.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
@@ -72,7 +73,18 @@ class _HomePageState extends State<HomePage> {
                         averageColorOfImage: averageColorOfImage);
                   }
                 }
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(),
+                    Text(
+                      'Generating your curated daily song...',
+                      style: Styles().defaultText,
+                    )
+                  ],
+                ));
               },
               future: getDailyTrack(),
             )));

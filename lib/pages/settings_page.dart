@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
@@ -9,8 +10,6 @@ import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/genre_selector.dart';
 import 'package:daily_spotify/widgets/artist_selector.dart';
 import 'package:daily_spotify/widgets/track_selector.dart';
-
-import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -109,8 +108,22 @@ class _SettingsPageState extends State<SettingsPage> {
                                 setState(() {});
                               },
                             ),
+                            SettingsButton(
+                              titleText: 'Disconnect',
+                              descriptionText:
+                                  'Remove this app from your Spotify account.',
+                              buttonText: 'Manage Spotify Apps',
+                              onPressed: () async {
+                                Uri url = Uri.parse(
+                                    'https://www.spotify.com/us/account/apps/');
+
+                                if (!await launchUrl(url)) {
+                                  throw Exception('Could not launch $url');
+                                }
+                              },
+                            ),
                             // DEVELOPER DEBUG, TODO: REMOVE BEFORE RELEASE
-                            TextButton(
+                            /*TextButton(
                                 onPressed: () async {
                                   AccessToken accessToken =
                                       await requestAccessToken(null);
@@ -152,7 +165,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   print('\n');
                                 },
                                 child: const Text(
-                                    'Generate a new recommendation')),
+                                    'Generate a new recommendation')),*/
                             const Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -229,14 +242,22 @@ class SettingsListView extends StatelessWidget {
             Expanded(
               child: Align(
                 alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => SettingsEdit(
-                            settingsSelector: settingsSelector,
-                            onSave: onSave,
-                          ))),
-                  color: Styles().mainColor,
+                child: CircleAvatar(
+                  radius: 21.0,
+                  backgroundColor: Styles().secondaryColor,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.edit,
+                      color: Styles().primarySwatch,
+                    ),
+                    onPressed: () =>
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SettingsEdit(
+                                  settingsSelector: settingsSelector,
+                                  onSave: onSave,
+                                ))),
+                    color: Styles().mainColor,
+                  ),
                 ),
               ),
             )
@@ -342,5 +363,58 @@ class SettingsEdit extends StatelessWidget {
           showLogo: false,
           child: Center(child: settingsSelector),
         ));
+  }
+}
+
+/// A widget for displaying a text button for settings.
+/// Requires [titleText], a [String] of the title of the setting,
+/// [descriptionText], a [String] that is the description of the setting,
+/// [buttonText] a [String] of the button's text , and [onPressed] a method that
+/// is called when the text button has been pressed.
+class SettingsButton extends StatelessWidget {
+  const SettingsButton(
+      {super.key,
+      required this.titleText,
+      required this.descriptionText,
+      required this.buttonText,
+      required this.onPressed});
+  final String titleText;
+  final String descriptionText;
+  final String buttonText;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          titleText,
+          style: Styles().largeText,
+        ),
+        Row(
+          children: [
+            Flexible(
+              child: Text(
+                descriptionText,
+                style: Styles().defaultText,
+              ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                    onPressed: onPressed,
+                    style: Styles().unselectedElevatedButtonStyle,
+                    child: Text(
+                      buttonText,
+                      style: Styles().subtitleTextWithPrimaryColor,
+                    )),
+              ),
+            )
+          ],
+        ),
+      ],
+    );
   }
 }
