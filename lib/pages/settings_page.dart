@@ -361,6 +361,7 @@ class SettingsEdit extends StatelessWidget {
         ),
         body: Frame(
           showLogo: false,
+          showMetadataAttribute: true,
           child: Center(child: settingsSelector),
         ));
   }

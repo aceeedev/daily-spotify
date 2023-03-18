@@ -73,11 +73,28 @@ class TrackView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    IconButton(
-                        onPressed: () async =>
-                            await openSong(track.spotifyHref),
-                        icon: Icon(Icons.play_circle,
-                            color: Styles().mainColor, size: 72.0)),
+                    ElevatedButton(
+                      onPressed: () async => await openSong(track.spotifyHref),
+                      style: Styles().unselectedElevatedButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Open in ',
+                            style: Styles().subtitleText,
+                            textAlign: TextAlign.center,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 6.0),
+                            child: Image.asset(
+                                'assets/Spotify_Icon_RGB_Green.png',
+                                width: 32,
+                                height: 32),
+                          ),
+                        ],
+                      ),
+                    ),
                     Align(
                       alignment: Alignment.centerRight,
                       child: Padding(

@@ -30,6 +30,8 @@ class _SetupPageState extends State<SetupPage> {
     return Scaffold(
       body: Frame(
         showLogo: true,
+        showMetadataAttribute:
+            context.read<SetupForm>().step != 0 ? true : false,
         child: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Column(

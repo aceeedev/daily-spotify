@@ -29,6 +29,7 @@ class _CalendarPageState extends State<CalendarPage> {
       ),
       body: Frame(
         showLogo: false,
+        showMetadataAttribute: true,
         child: FutureBuilder(
           future: db.Tracks.instance.getAllDailyTracks(),
           builder: (context, snapshot) {

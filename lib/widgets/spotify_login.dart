@@ -63,18 +63,6 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
             ),
           ),
         ),
-        Text(
-          'Note: Any and all metadata and cover art data is provided by Spotify and their respective services.',
-          textAlign: TextAlign.center,
-          style: Styles().defaultText,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Image.asset(
-            'assets/Spotify_Logo_RGB_Green.png',
-            height: 48.0,
-          ),
-        )
       ],
     );
   }
