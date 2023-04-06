@@ -93,11 +93,7 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
       'client_id': secrets.spotifyClientId,
       'code_verifier': await db.Auth.instance.getCodeVerifier()
     };
-    final headers = {
-      'Authorization':
-          'Basic ${base64.encode(utf8.encode('${secrets.spotifyClientId}:${secrets.spotifyClientSecret}'))}',
-      'Content-Type': 'application/x-www-form-urlencoded'
-    };
+    final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
 
     final response =
         await http.Client().post(url, headers: headers, body: form);
