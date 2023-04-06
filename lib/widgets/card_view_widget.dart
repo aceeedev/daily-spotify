@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/styles.dart';
 
-/// A [GridView] of custom [Card]s.
+/// A [MasonryGridView] of custom [Card]s.
 ///
 /// The parameter [type] can either be [Artist] or [Track].
 class CardView extends StatefulWidget {
@@ -20,10 +21,9 @@ class CardView extends StatefulWidget {
 class _CardViewState extends State<CardView> {
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: widget.type == Artist ? 7 / 8 : 7 / 9),
+    return MasonryGridView.builder(
+      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2),
       itemCount: widget.itemList.length,
       itemBuilder: (context, index) {
         dynamic item = widget.itemList[index];

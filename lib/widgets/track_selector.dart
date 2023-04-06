@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
-import 'package:daily_spotify/widgets/card_view.dart';
+import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/widgets/card_view_widget.dart';
+import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:daily_spotify/styles.dart';
 
 class TrackSelector extends StatefulWidget {
@@ -32,34 +34,69 @@ class _TrackSelectorState extends State<TrackSelector> {
           textAlign: TextAlign.center,
           style: Styles().subtitleText,
         ),
-        Expanded(child: CardView(itemList: itemList, type: Track)),
+        FutureBuilder(
+            future: getItemList(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Text('An error has occurred, ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  return Expanded(
+                      child: CardView(itemList: snapshot.data!, type: Track));
+                }
+              }
+
+              return const LoadingIndicator(text: 'Finding your top songs...');
+            }),
       ],
     );
   }
 
-  Future getItemList() async {
+  Future<List<Track>?> getItemList() async {
     AccessToken accessToken = await spotify_auth.requestAccessToken(null);
-    List<Track> totalTrackList =
+    List<Track> trackList =
         await getUserTopItems(accessToken: accessToken, type: Track);
 
     if (!mounted) return null;
-    if (context.read<SetupForm>().totalTrackList.isEmpty) {
-      context.read<SetupForm>().addAllToTotalTrackList(totalTrackList);
-    }
+    bool initiallyEmpty = context.read<SetupForm>().totalTrackList.isEmpty;
 
-    bool selectedListIsOriginallyEmpty =
-        context.read<SetupForm>().selectedTrackList.isEmpty;
-    List<Track> newItemList = [];
-    for (int i = 0; i < totalTrackList.length; i++) {
-      if (i <= 2 && selectedListIsOriginallyEmpty) {
-        context.read<SetupForm>().addToSelectedTrackList(totalTrackList[i]);
+    List<Track> savedTracks = await db.Config.instance.getTrackConfig();
+    if (savedTracks.isNotEmpty) {
+      if (!mounted) return null;
+
+      for (Track track in savedTracks) {
+        context.read<SetupForm>().addToSelectedTrackList(track);
+
+        trackList.removeWhere((element) => element.id == track.id);
       }
-      newItemList.add(totalTrackList[i]);
+
+      if (initiallyEmpty) {
+        context.read<SetupForm>().addAllToTotalTrackList(savedTracks);
+      }
     }
 
-    setState(() => itemList = newItemList);
+    if (!mounted) return null;
+    if (initiallyEmpty) {
+      context.read<SetupForm>().addAllToTotalTrackList(trackList);
+    }
 
-    if (!mounted) return;
-    context.read<SetupForm>().setFinishedStep(true);
+    if (!mounted) return null;
+    bool initialSelectedTracksExist =
+        context.read<SetupForm>().selectedTrackList.isNotEmpty;
+    List<Track> totalTrackList = context.read<SetupForm>().totalTrackList;
+
+    if (!initialSelectedTracksExist) {
+      for (int i = 0;
+          i < (totalTrackList.length < 3 ? totalTrackList.length : 3);
+          i++) {
+        Track track = totalTrackList[i];
+
+        // add remaining tracks if needed to get 3 selected tracks
+        context.read<SetupForm>().addToSelectedTrackList(track);
+      }
+    }
+
+    return totalTrackList;
   }
 }

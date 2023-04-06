@@ -68,7 +68,9 @@ class _SettingsPageState extends State<SettingsPage> {
                             SettingsListView(
                               text: 'Your favorite genres',
                               items: genreStringList,
-                              settingsSelector: const GenreSelector(),
+                              settingsSelector: const GenreSelector(
+                                inSetup: false,
+                              ),
                               onSave: () async {
                                 List<String> genreList =
                                     context.read<SetupForm>().selectedGenreList;

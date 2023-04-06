@@ -48,7 +48,8 @@ class SetupForm with ChangeNotifier {
   }
 
   String? addToSelectedGenreList(String genre) {
-    if (_selectedGenreList.length >= _maxNumSelections || _selectedGenreList.contains(genre)) {
+    if (_selectedGenreList.length >= _maxNumSelections ||
+        _selectedGenreList.contains(genre)) {
       return null;
     }
 
@@ -66,7 +67,8 @@ class SetupForm with ChangeNotifier {
   }
 
   Artist? addToSelectedArtistList(Artist artist) {
-    if (_selectedArtistList.length >= _maxNumSelections || _selectedArtistList.contains(artist)) {
+    if (_selectedArtistList.length >= _maxNumSelections ||
+        _selectedArtistList.contains(artist)) {
       return null;
     }
 
@@ -84,7 +86,8 @@ class SetupForm with ChangeNotifier {
   }
 
   Track? addToSelectedTrackList(Track track) {
-    if (_selectedTrackList.length >= _maxNumSelections || _selectedTrackList.contains(track)) {
+    if (_selectedTrackList.length >= _maxNumSelections ||
+        _selectedTrackList.contains(track)) {
       return null;
     }
 

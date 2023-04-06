@@ -1,26 +1,22 @@
+import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
+import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/utils/filter_by_genre.dart';
 import 'package:daily_spotify/styles.dart';
 
 class GenreSelector extends StatefulWidget {
-  const GenreSelector({super.key});
+  const GenreSelector({super.key, required this.inSetup});
+  final bool inSetup;
 
   @override
   State<GenreSelector> createState() => _GenreSelectorState();
 }
 
 class _GenreSelectorState extends State<GenreSelector> {
-  @override
-  void initState() {
-    super.initState();
-
-    getAndAddGenres();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -30,48 +26,81 @@ class _GenreSelectorState extends State<GenreSelector> {
           textAlign: TextAlign.center,
           style: Styles().subtitleText,
         ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Wrap(
-              children:
-                  getGenreButtons(context.watch<SetupForm>().totalGenreList),
-            ),
-          ),
-        )
+        FutureBuilder(
+            future: getAndAddGenres(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Text('An error has occurred, ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  return Expanded(
+                    child: SingleChildScrollView(
+                      child: Wrap(
+                        children: getGenreButtons(
+                            context.read<SetupForm>().totalGenreList),
+                      ),
+                    ),
+                  );
+                }
+              }
+
+              return const LoadingIndicator(text: 'Finding your top genres...');
+            }),
       ],
     );
   }
 
-  void getAndAddGenres() async {
+  Future<bool> getAndAddGenres() async {
     AccessToken accessToken = await spotify_auth.requestAccessToken(null);
 
     List<Artist> artistList =
         await getUserTopItems(accessToken: accessToken, type: Artist);
 
-    if (!mounted) return;
-    if (context.read<SetupForm>().totalArtistList.isEmpty) {
+    if (!mounted) return false;
+    if (context.read<SetupForm>().totalArtistList.isEmpty && widget.inSetup) {
       context.read<SetupForm>().addAllToTotalArtistList(artistList);
     }
 
     Map<String, int> genresMap = await filterByGenre(accessToken, artistList);
+    List<String> genresList = genresMap.keys.toList();
+    if (!mounted) return false;
+    bool initiallyEmpty = context.read<SetupForm>().totalGenreList.isEmpty;
 
-    if (!mounted) return;
-    if (context.read<SetupForm>().totalGenreList.isEmpty) {
-      context.read<SetupForm>().addAllToTotalGenreList(genresMap.keys.toList());
+    List<String> savedGenres = await db.Config.instance.getGenreConfig();
+    if (savedGenres.isNotEmpty) {
+      if (!mounted) return false;
+
+      for (String genre in savedGenres) {
+        context.read<SetupForm>().addToSelectedGenreList(genre);
+
+        genresList.remove(genre);
+      }
+
+      if (initiallyEmpty) {
+        context.read<SetupForm>().addAllToTotalGenreList(savedGenres);
+      }
+    }
+
+    if (!mounted) return false;
+    if (initiallyEmpty) {
+      context.read<SetupForm>().addAllToTotalGenreList(genresList);
     }
     context.read<SetupForm>().setFinishedStep(true);
+
+    return true;
   }
 
   List<Widget> getGenreButtons(List<String> genreList) {
-    bool selectedListIsOriginallyEmpty =
-        context.read<SetupForm>().selectedGenreList.isEmpty;
-    List<GenreButton> genreButtons = [];
+    bool initialSelectedGenresExist =
+        context.read<SetupForm>().selectedGenreList.isNotEmpty;
 
+    List<GenreButton> genreButtons = [];
     for (int i = 0; i < genreList.length; i++) {
       String genre = genreList[i];
 
-      // add the top three genres as selected
-      if (i <= 2 && selectedListIsOriginallyEmpty) {
+      // add remaining genres if needed to get 3 selected genres
+      if (i < 3 && !initialSelectedGenresExist) {
         context.read<SetupForm>().addToSelectedGenreList(genre);
       }
 

@@ -1,4 +1,3 @@
-import 'package:daily_spotify/main.dart';
 import 'package:flutter/material.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
@@ -6,8 +5,9 @@ import 'package:daily_spotify/pages/calendar_page.dart';
 import 'package:daily_spotify/pages/settings_page.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
-import 'package:daily_spotify/widgets/brand_text.dart';
-import 'package:daily_spotify/widgets/track_view.dart';
+import 'package:daily_spotify/widgets/brand_text_widget.dart';
+import 'package:daily_spotify/widgets/track_view_widget.dart';
+import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
 import 'package:daily_spotify/utils/get_average_color.dart';
@@ -73,18 +73,8 @@ class _HomePageState extends State<HomePage> {
                         averageColorOfImage: averageColorOfImage);
                   }
                 }
-                return Center(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const CircularProgressIndicator(),
-                    Text(
-                      'Generating your curated daily song...',
-                      style: Styles().defaultText,
-                    )
-                  ],
-                ));
+                return const LoadingIndicator(
+                    text: 'Generating your curated daily song...');
               },
               future: getDailyTrack(),
             )));

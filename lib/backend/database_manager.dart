@@ -54,13 +54,25 @@ class Config {
   Future<void> saveTrackConfig(List<Track> trackList) async =>
       (await box).put('track', trackList);
 
-  Future<List<String>> getGenreConfig() async => (await box).get('genre');
+  Future<List<String>> getGenreConfig() async {
+    List<String>? genreList = (await box).get('genre');
 
-  Future<List<Artist>> getArtistConfig() async =>
-      ((await box).get('artist') as List<dynamic>).cast<Artist>();
+    return genreList ?? [];
+  }
 
-  Future<List<Track>> getTrackConfig() async =>
-      ((await box).get('track') as List<dynamic>).cast<Track>();
+  Future<List<Artist>> getArtistConfig() async {
+    List<Artist>? artistList =
+        ((await box).get('artist') as List<dynamic>?)?.cast<Artist>();
+
+    return artistList ?? [];
+  }
+
+  Future<List<Track>> getTrackConfig() async {
+    List<Track>? trackList =
+        ((await box).get('track') as List<dynamic>?)?.cast<Track>();
+
+    return trackList ?? [];
+  }
 }
 
 class Tracks {

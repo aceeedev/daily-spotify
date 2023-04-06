@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/widgets/frame_widget.dart';
-import 'package:daily_spotify/widgets/track_view.dart';
-import 'package:daily_spotify/widgets/brand_text.dart';
+import 'package:daily_spotify/widgets/track_view_widget.dart';
+import 'package:daily_spotify/widgets/brand_text_widget.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/utils/get_average_color.dart';
 

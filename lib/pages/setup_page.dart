@@ -9,6 +9,7 @@ import 'package:daily_spotify/widgets/spotify_login.dart';
 import 'package:daily_spotify/widgets/genre_selector.dart';
 import 'package:daily_spotify/widgets/artist_selector.dart';
 import 'package:daily_spotify/widgets/track_selector.dart';
+import 'package:daily_spotify/widgets/spotify_attribute_widget.dart';
 
 class SetupPage extends StatefulWidget {
   const SetupPage({super.key});
@@ -20,7 +21,9 @@ class SetupPage extends StatefulWidget {
 class _SetupPageState extends State<SetupPage> {
   final List<Widget> stepWidgets = const [
     SpotifyLogin(),
-    GenreSelector(),
+    GenreSelector(
+      inSetup: true,
+    ),
     ArtistSelector(),
     TrackSelector()
   ];
@@ -30,14 +33,15 @@ class _SetupPageState extends State<SetupPage> {
     return Scaffold(
       body: Frame(
         showLogo: true,
-        showMetadataAttribute:
-            context.read<SetupForm>().step != 0 ? true : false,
         child: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(child: stepWidgets[context.watch<SetupForm>().step]),
+              context.read<SetupForm>().step != 0
+                  ? const SpotifyAttribute()
+                  : const SizedBox.shrink(),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Row(
