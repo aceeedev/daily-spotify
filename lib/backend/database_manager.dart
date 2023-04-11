@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 
@@ -12,7 +14,25 @@ class Auth {
   Future<Box> get box async {
     if (_box != null) return _box!;
 
-    _box = await Hive.openBox('auth');
+    // encrypted box
+    const secureStorage = FlutterSecureStorage();
+
+    // if key not exists return null
+    final encryptionKeyString = await secureStorage.read(key: 'key');
+    if (encryptionKeyString == null) {
+      final key = Hive.generateSecureKey();
+      await secureStorage.write(
+        key: 'key',
+        value: base64UrlEncode(key),
+      );
+    }
+
+    final key = await secureStorage.read(key: 'key');
+    final encryptionKeyUint8List = base64Url.decode(key!);
+
+    _box = await Hive.openBox('auth',
+        encryptionCipher: HiveAesCipher(encryptionKeyUint8List));
+
     return _box!;
   }
 
