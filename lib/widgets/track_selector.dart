@@ -6,6 +6,7 @@ import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
+import 'package:daily_spotify/utils/default_config.dart';
 import 'package:daily_spotify/styles.dart';
 
 class TrackSelector extends StatefulWidget {
@@ -57,6 +58,15 @@ class _TrackSelectorState extends State<TrackSelector> {
     AccessToken accessToken = await spotify_auth.requestAccessToken(null);
     List<Track> trackList =
         await getUserTopItems(accessToken: accessToken, type: Track);
+
+    if (trackList.isEmpty) {
+      trackList = await getUserTopItems(
+          accessToken: accessToken, type: Track, timeRange: 'short_term');
+    }
+    // get tracks from top global 50 songs on Spotify
+    if (trackList.isEmpty) {
+      trackList = await getDefaultTracks(accessToken);
+    }
 
     if (!mounted) return null;
     bool initiallyEmpty = context.read<SetupForm>().totalTrackList.isEmpty;

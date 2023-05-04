@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
-import './filter_by_genre.dart';
+import 'package:daily_spotify/utils/filter_by_genre.dart';
+import 'package:daily_spotify/utils/default_config.dart';
 
 /// Returns curated [Future<Map<String, dynamic>>] of the recommendation seeds
 /// to be used in [getRecommendations].
@@ -27,6 +28,10 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
     List<Artist> artistList = await getUserTopItems(
         accessToken: accessToken, type: Artist, timeRange: 'short_term');
 
+    if (artistList.isEmpty) {
+      artistList = await getDefaultArtists(accessToken);
+    }
+
     seedArtists.add(artistList.first);
   } else {
     seedArtists.add(randomElement(artistList));
@@ -37,8 +42,12 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
     List<Artist> artistList = await getUserTopItems(
         accessToken: accessToken, type: Artist, timeRange: 'short_term');
 
-    List<String> genreList =
-        (await filterByGenre(accessToken, artistList)).keys.toList();
+    List<String> genreList = [];
+    if (artistList.isEmpty) {
+      genreList = getDefaultGenres();
+    } else {
+      genreList = (await filterByGenre(accessToken, artistList)).keys.toList();
+    }
 
     seedGenres.add(genreList.first);
   } else {
@@ -49,7 +58,11 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
   List<Track> trackList = await getUserTopItems(
       accessToken: accessToken, type: Track, timeRange: 'short_term');
 
-  if (getMoreRecent == 2 || trackList.isEmpty) {
+  if (trackList.isEmpty) {
+    trackList = await getDefaultTracks(accessToken);
+  }
+
+  if (getMoreRecent == 2) {
     seedTracks = trackList.sublist(0, 2);
   } else {
     seedTracks.add(trackList.first);

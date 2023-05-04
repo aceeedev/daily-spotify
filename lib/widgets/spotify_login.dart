@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
+import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/styles.dart';
 
@@ -33,6 +33,8 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
                 String? authCode = await spotify_auth.requestUserAuth();
 
                 if (authCode != null) {
+                  await db.Auth.instance.saveAuthCode(authCode);
+
                   // get initial access token
                   await spotify_auth.requestAccessToken(authCode);
 

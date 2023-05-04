@@ -1,3 +1,4 @@
+import 'package:daily_spotify/utils/default_config.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +57,28 @@ class _GenreSelectorState extends State<GenreSelector> {
 
     List<Artist> artistList =
         await getUserTopItems(accessToken: accessToken, type: Artist);
+
+    if (artistList.isEmpty) {
+      artistList = await getUserTopItems(
+          accessToken: accessToken, type: Artist, timeRange: 'short_term');
+    }
+    // get artists from top global 50 songs on Spotify
+    if (artistList.isEmpty) {
+      if (!mounted) return false;
+
+      bool initiallyEmpty = context.read<SetupForm>().totalGenreList.isEmpty;
+      if (initiallyEmpty) {
+        context.read<SetupForm>().addAllToTotalGenreList(getDefaultGenres());
+      }
+
+      if (context.read<SetupForm>().totalArtistList.isEmpty && widget.inSetup) {
+        context
+            .read<SetupForm>()
+            .addAllToTotalArtistList(await getDefaultArtists(accessToken));
+      }
+
+      return true;
+    }
 
     if (!mounted) return false;
     if (context.read<SetupForm>().totalArtistList.isEmpty && widget.inSetup) {

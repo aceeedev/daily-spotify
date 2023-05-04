@@ -49,11 +49,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   } else if (snapshot.hasData) {
                     List<String> genreStringList = (snapshot.data
                         as Map<String, dynamic>)['genreList'] as List<String>;
-                    List<SpotifyImage> artistImageList =
-                        ((snapshot.data as Map<String, dynamic>)['artistList']
-                                as List<Artist>)
-                            .map((e) => e.images!.last)
-                            .toList();
+                    List<SpotifyImage?> artistImageList = ((snapshot.data
+                                as Map<String, dynamic>)['artistList']
+                            as List<Artist>)
+                        .map((e) => e.images != null ? e.images!.last : null)
+                        .toList();
                     List<SpotifyImage> trackImageList =
                         ((snapshot.data as Map<String, dynamic>)['trackList']
                                 as List<Track>)
@@ -173,17 +173,13 @@ class _SettingsPageState extends State<SettingsPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Inspired by ella ',
+                                  ' Created by andrew',
                                   style: Styles().subtitleText,
                                 ),
                                 Icon(
                                   Icons.favorite,
                                   color: Styles().mainColor,
                                 ),
-                                Text(
-                                  ' Created by andrew',
-                                  style: Styles().subtitleText,
-                                )
                               ],
                             )
                           ]),
@@ -272,7 +268,7 @@ class SettingsListView extends StatelessWidget {
   List<Widget> getCurrentSettingsWidgets() {
     List<Widget> currentSettings;
 
-    if (items.isEmpty) {
+    if (items.isEmpty || items.contains(null)) {
       return [
         Text(
           'None selected. We will select for you',

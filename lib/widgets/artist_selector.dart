@@ -6,6 +6,7 @@ import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
+import 'package:daily_spotify/utils/default_config.dart';
 import 'package:daily_spotify/styles.dart';
 
 class ArtistSelector extends StatefulWidget {
@@ -56,6 +57,14 @@ class _ArtistSelectorState extends State<ArtistSelector> {
 
       List<Artist> artistList =
           await getUserTopItems(accessToken: accessToken, type: Artist);
+
+      if (artistList.isEmpty) {
+        artistList = await getUserTopItems(
+            accessToken: accessToken, type: Artist, timeRange: 'short_term');
+      }
+      if (artistList.isEmpty) {
+        artistList = await getDefaultArtists(accessToken);
+      }
 
       List<Artist> savedArtists = await db.Config.instance.getArtistConfig();
       if (savedArtists.isNotEmpty) {

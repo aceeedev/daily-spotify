@@ -148,17 +148,19 @@ class _CustomCardState extends State<CustomCard> {
           child: Padding(
             padding: const EdgeInsets.all(5.0),
             child: Column(children: [
-              AspectRatio(
-                aspectRatio: widget.type == Artist ? 8 / 7 : 3 / 2,
-                child: Image.network(
-                    (widget.item.images[1] as SpotifyImage).url,
-                    width: (widget.item.images[1] as SpotifyImage)
-                        .width
-                        .toDouble(),
-                    height: (widget.item.images[1] as SpotifyImage)
-                        .height
-                        .toDouble()),
-              ),
+              widget.item.images != null
+                  ? AspectRatio(
+                      aspectRatio: widget.type == Artist ? 8 / 7 : 3 / 2,
+                      child: Image.network(
+                          (widget.item.images[1] as SpotifyImage).url,
+                          width: (widget.item.images[1] as SpotifyImage)
+                              .width
+                              .toDouble(),
+                          height: (widget.item.images[1] as SpotifyImage)
+                              .height
+                              .toDouble()),
+                    )
+                  : const SizedBox.shrink(),
               Text(
                 widget.item.name,
                 textAlign: TextAlign.center,

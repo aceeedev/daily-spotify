@@ -85,35 +85,7 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
   AccessToken? accessToken = await db.Auth.instance.getAccessToken();
 
   if (accessToken == null) {
-    final url = Uri.https('accounts.spotify.com', '/api/token');
-    final form = {
-      'code': authCode,
-      'redirect_uri': '$_redirectUriScheme://callback',
-      'grant_type': 'authorization_code',
-      'client_id': secrets.spotifyClientId,
-      'code_verifier': await db.Auth.instance.getCodeVerifier()
-    };
-    final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-
-    final response =
-        await http.Client().post(url, headers: headers, body: form);
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> json = jsonDecode(response.body);
-
-      final newAccessToken = AccessToken(
-          accessToken: json['access_token'],
-          tokenType: json['token_type'],
-          scope: json['scope'],
-          expiresIn: json['expires_in'],
-          createdAt: DateTime.now(),
-          refreshToken: json['refresh_token']);
-      await db.Auth.instance.saveAccessToken(newAccessToken);
-
-      return newAccessToken;
-    } else {
-      throw Exception('Response code was not 200, was ${response.statusCode}');
-    }
+    return await getBrandNewAccessToken(authCode!);
   } else {
     if (accessToken.expiresAt.isBefore(DateTime.now())) {
       // refresh the access token
@@ -141,6 +113,10 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
         await db.Auth.instance.saveAccessToken(newAccessToken);
 
         return newAccessToken;
+      } else if (response.statusCode == 400) {
+        authCode = await db.Auth.instance.getAuthCode();
+
+        return await getBrandNewAccessToken(authCode);
       } else {
         throw Exception(
             'Response code was not 200, was ${response.statusCode}');
@@ -148,5 +124,36 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
     } else {
       return accessToken;
     }
+  }
+}
+
+Future<AccessToken> getBrandNewAccessToken(String authCode) async {
+  final url = Uri.https('accounts.spotify.com', '/api/token');
+  final form = {
+    'code': authCode,
+    'redirect_uri': '$_redirectUriScheme://callback',
+    'grant_type': 'authorization_code',
+    'client_id': secrets.spotifyClientId,
+    'code_verifier': await db.Auth.instance.getCodeVerifier()
+  };
+  final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+
+  final response = await http.Client().post(url, headers: headers, body: form);
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> json = jsonDecode(response.body);
+
+    final newAccessToken = AccessToken(
+        accessToken: json['access_token'],
+        tokenType: json['token_type'],
+        scope: json['scope'],
+        expiresIn: json['expires_in'],
+        createdAt: DateTime.now(),
+        refreshToken: json['refresh_token']);
+    await db.Auth.instance.saveAccessToken(newAccessToken);
+
+    return newAccessToken;
+  } else {
+    throw Exception('Response code was not 200, was ${response.statusCode}');
   }
 }

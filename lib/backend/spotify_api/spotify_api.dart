@@ -4,6 +4,7 @@ export './auth.dart';
 export './get_users_top_items.dart';
 export './get_recommendations.dart';
 export './get_available_genre_seeds.dart';
+export './get_playlist_tracks.dart';
 
 export './models/access_token.dart';
 export './models/artist.dart';

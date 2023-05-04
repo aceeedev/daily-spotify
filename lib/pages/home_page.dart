@@ -93,6 +93,14 @@ class _HomePageState extends State<HomePage> {
       return {'dailyTrack': dailyTrack, 'averageColorOfImage': averageColor};
     }
 
+    DailyTrack newDailyTrack = await getNewDailyTrack(now);
+    Color averageColor =
+        await getAverageColor(newDailyTrack.track.images.last.url);
+
+    return {'dailyTrack': newDailyTrack, 'averageColorOfImage': averageColor};
+  }
+
+  Future<DailyTrack> getNewDailyTrack(DateTime today) async {
     // generate new recommendations
     AccessToken accessToken = await requestAccessToken(null);
     List<Artist> initialSeedArtists =
@@ -116,16 +124,10 @@ class _HomePageState extends State<HomePage> {
         .toList();
     for (Track track in recommendation.tracks) {
       if (!allPastTracks.contains(track)) {
-        DailyTrack newDailyTrack = DailyTrack(date: now, track: track);
-        db.Tracks.instance.saveDailyTrack(newDailyTrack);
+        DailyTrack newDailyTrack = DailyTrack(date: today, track: track);
+        await db.Tracks.instance.saveDailyTrack(newDailyTrack);
 
-        Color averageColor =
-            await getAverageColor(newDailyTrack.track.images.last.url);
-
-        return {
-          'dailyTrack': newDailyTrack,
-          'averageColorOfImage': averageColor
-        };
+        return newDailyTrack;
       }
     }
 

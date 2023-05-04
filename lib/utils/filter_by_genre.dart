@@ -9,13 +9,15 @@ Future<Map<String, int>> filterByGenre(
     AccessToken accessToken, List<Artist> artistList) async {
   Map<String, int> genresMap = {};
   for (Artist artist in artistList) {
-    artist.genres!.toList().forEach((genre) {
-      if (genresMap[genre] == null) {
-        genresMap[genre] = 1;
-      } else {
-        genresMap[genre] = genresMap[genre]! + 1;
-      }
-    });
+    if (artist.genres != null) {
+      artist.genres!.toList().forEach((genre) {
+        if (genresMap[genre] == null) {
+          genresMap[genre] = 1;
+        } else {
+          genresMap[genre] = genresMap[genre]! + 1;
+        }
+      });
+    }
   }
 
   // remove genres that are not able to be used as a recommendation
