@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,6 +11,7 @@ import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/genre_selector.dart';
 import 'package:daily_spotify/widgets/artist_selector.dart';
 import 'package:daily_spotify/widgets/track_selector.dart';
+import 'package:daily_spotify/widgets/developer_settings_widgets.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -124,50 +126,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                 }
                               },
                             ),
-                            // DEVELOPER DEBUG, TODO: REMOVE BEFORE RELEASE
-                            /*TextButton(
-                                onPressed: () async {
-                                  AccessToken accessToken =
-                                      await requestAccessToken(null);
-                                  List<Artist> initialSeedArtists = await db
-                                      .Config.instance
-                                      .getArtistConfig();
-                                  List<String> initialSeedGenres =
-                                      await db.Config.instance.getGenreConfig();
-                                  List<Track> initialSeedTracks =
-                                      await db.Config.instance.getTrackConfig();
-
-                                  Map<String, dynamic> seeds =
-                                      await getRecommendationSeeds(
-                                          initialSeedArtists,
-                                          initialSeedGenres,
-                                          initialSeedTracks);
-
-                                  Recommendation recommendation =
-                                      await getRecommendations(
-                                          accessToken: accessToken,
-                                          seedArtists: seeds['seedArtists']
-                                              as List<Artist>,
-                                          seedGenres: seeds['seedGenres']
-                                              as List<String>,
-                                          seedTracks: seeds['seedTracks']
-                                              as List<Track>,
-                                          maxPopularity: 75);
-
-                                  print(
-                                      '${recommendation.tracks.length} Recommendations');
-                                  print('genre seeds: ${seeds['seedGenres']}');
-                                  print(
-                                      'artist seeds: ${(seeds['seedArtists'] as List<Artist>).map((e) => e.name).toList().join(', ')}');
-                                  print(
-                                      'track seeds: ${(seeds['seedTracks'] as List<Track>).map((e) => e.name).toList().join(', ')}');
-                                  print(recommendation.tracks.first.name);
-                                  print(
-                                      recommendation.tracks.first.getArtists());
-                                  print('\n');
-                                },
-                                child: const Text(
-                                    'Generate a new recommendation')),*/
+                            kReleaseMode
+                                ? const SizedBox.shrink()
+                                : const DeveloperSettingsWidgets(),
                             const Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -279,6 +240,7 @@ class SettingsListView extends StatelessWidget {
 
     switch (items.runtimeType) {
       case List<SpotifyImage>:
+      case List<SpotifyImage?>:
         {
           currentSettings = items
               .map((e) => Padding(
@@ -321,7 +283,7 @@ class SettingsListView extends StatelessWidget {
       default:
         {
           throw Exception(
-              'items is not of type SpotifyImage or String, it is of type ${items.runtimeType}');
+              'items is not of type SpotifyImage, SpotifyImage?, or String, it is of type ${items.runtimeType}');
         }
     }
 

@@ -44,9 +44,17 @@ class _CalendarPageState extends State<CalendarPage> {
                 // find the months between the first daily track and now
                 DateTime firstDailyTrackDateTime =
                     allDailyTracksList.first.date;
-                DateTime now = DateTime.now();
+
+                DateTime mostRecentDailyTrackDate = DateTime.now();
+                for (DailyTrack dailyTrack in allDailyTracksList) {
+                  if (dailyTrack.date.compareTo(mostRecentDailyTrackDate) > 0) {
+                    mostRecentDailyTrackDate = dailyTrack.date;
+                  }
+                }
+
                 List<DateTime> monthsBetweenFirstDailyTrackAndNow = [];
-                while (firstDailyTrackDateTime.isBefore(now)) {
+                while (firstDailyTrackDateTime
+                    .isBefore(mostRecentDailyTrackDate)) {
                   monthsBetweenFirstDailyTrackAndNow
                       .add(firstDailyTrackDateTime);
 
@@ -84,14 +92,18 @@ class _CalendarPageState extends State<CalendarPage> {
                     itemCount: monthsBetweenFirstDailyTrackAndNow.length,
                     itemBuilder: (context, index) => Column(
                           children: [
-                            Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  DateFormat('MMM y').format(
-                                      monthsBetweenFirstDailyTrackAndNow[
-                                          index]),
-                                  style: Styles().largeText,
-                                )),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(top: index != 0 ? 12.0 : 0),
+                              child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    DateFormat('MMM y').format(
+                                        monthsBetweenFirstDailyTrackAndNow[
+                                            index]),
+                                    style: Styles().largeText,
+                                  )),
+                            ),
                             MonthCalendar(
                               monthlyDateTime:
                                   monthsBetweenFirstDailyTrackAndNow[index],

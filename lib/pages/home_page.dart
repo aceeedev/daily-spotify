@@ -9,7 +9,7 @@ import 'package:daily_spotify/widgets/brand_text_widget.dart';
 import 'package:daily_spotify/widgets/track_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:daily_spotify/models/daily_track.dart';
-import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
+import 'package:daily_spotify/utils/get_new_daily_track.dart';
 import 'package:daily_spotify/utils/get_average_color.dart';
 
 class HomePage extends StatefulWidget {
@@ -98,39 +98,5 @@ class _HomePageState extends State<HomePage> {
         await getAverageColor(newDailyTrack.track.images.last.url);
 
     return {'dailyTrack': newDailyTrack, 'averageColorOfImage': averageColor};
-  }
-
-  Future<DailyTrack> getNewDailyTrack(DateTime today) async {
-    // generate new recommendations
-    AccessToken accessToken = await requestAccessToken(null);
-    List<Artist> initialSeedArtists =
-        await db.Config.instance.getArtistConfig();
-    List<String> initialSeedGenres = await db.Config.instance.getGenreConfig();
-    List<Track> initialSeedTracks = await db.Config.instance.getTrackConfig();
-
-    Map<String, dynamic> seeds = await getRecommendationSeeds(
-        initialSeedArtists, initialSeedGenres, initialSeedTracks);
-
-    Recommendation recommendation = await getRecommendations(
-        accessToken: accessToken,
-        seedArtists: seeds['seedArtists'] as List<Artist>,
-        seedGenres: seeds['seedGenres'] as List<String>,
-        seedTracks: seeds['seedTracks'] as List<Track>,
-        maxPopularity: 75);
-
-    // make sure recommendation hasn't been recommended before
-    List<Track> allPastTracks = (await db.Tracks.instance.getAllDailyTracks())
-        .map((e) => e.track)
-        .toList();
-    for (Track track in recommendation.tracks) {
-      if (!allPastTracks.contains(track)) {
-        DailyTrack newDailyTrack = DailyTrack(date: today, track: track);
-        await db.Tracks.instance.saveDailyTrack(newDailyTrack);
-
-        return newDailyTrack;
-      }
-    }
-
-    throw Exception('No track was able to be generated');
   }
 }

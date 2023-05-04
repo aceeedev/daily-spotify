@@ -122,4 +122,6 @@ class Tracks {
 
     return allDailyTracks;
   }
+
+  Future<void> deleteAllDailyTracks() async => (await box).clear();
 }
