@@ -49,9 +49,9 @@
 	<true/>
 	<key>CFBundleURLTypes</key>
 	<array>
-	<dict>
 		<key>CFBundleTypeRole</key>
 		<string>Editor</string>
+	</array>
 	<key>CFBundleURLSchemes</key>
 	<array>
 	<string>com.example.daily-spotify</string>
