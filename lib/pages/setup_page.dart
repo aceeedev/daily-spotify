@@ -4,6 +4,7 @@ import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/pages/home_page.dart';
+import 'package:daily_spotify/widgets/custom_scaffold.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/spotify_login.dart';
 import 'package:daily_spotify/widgets/genre_selector.dart';
@@ -30,7 +31,7 @@ class _SetupPageState extends State<SetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
       body: Frame(
         showLogo: true,
         child: Padding(

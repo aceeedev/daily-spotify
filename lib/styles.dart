@@ -14,6 +14,7 @@ class Styles {
       primaryColor: _backgroundColor,
       primarySwatch: _primarySwatch,
       iconTheme: const IconThemeData(color: _mainColor),
+      colorScheme: ColorScheme.fromSeed(seedColor: _primarySwatch),
       useMaterial3: true);
 
   ThemeData get themeData => _themeData;

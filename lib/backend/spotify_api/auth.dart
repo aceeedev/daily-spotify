@@ -114,9 +114,9 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
 
         return newAccessToken;
       } else if (response.statusCode == 400) {
-        authCode = await db.Auth.instance.getAuthCode();
+        authCode = await requestUserAuth();
 
-        return await getBrandNewAccessToken(authCode);
+        return await getBrandNewAccessToken(authCode!);
       } else {
         throw Exception(
             'Response code was not 200, was ${response.statusCode}');

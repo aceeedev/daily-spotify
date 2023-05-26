@@ -10,9 +10,10 @@ class Frame extends StatelessWidget {
       {super.key,
       required this.child,
       required this.showLogo,
-      this.showMetadataAttribute = false});
+      this.showMetadataAttribute = false,
+      this.customPadding = const EdgeInsets.all(10.0)});
   final Widget child;
-  final double paddingSize = 10.0;
+  final EdgeInsetsGeometry customPadding;
   final bool showLogo;
   final bool showMetadataAttribute;
 
@@ -20,7 +21,7 @@ class Frame extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Padding(
-            padding: EdgeInsets.all(paddingSize),
+            padding: customPadding,
             child: Column(
               children: [
                 showLogo ? const BrandText() : const SizedBox.shrink(),

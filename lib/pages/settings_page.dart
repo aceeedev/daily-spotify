@@ -7,6 +7,7 @@ import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/pages/donation_page.dart';
+import 'package:daily_spotify/widgets/custom_scaffold.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/genre_selector.dart';
 import 'package:daily_spotify/widgets/artist_selector.dart';
@@ -23,16 +24,17 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             'Settings',
             style: Styles().largeText,
           ),
           actions: [
             TextButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => DonationPage())),
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const DonationPage())),
                 label: const Text('Donate'),
                 icon: const Icon(Icons.favorite_border))
           ],
@@ -137,9 +139,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ' Created by andrew',
                                   style: Styles().subtitleText,
                                 ),
-                                Icon(
-                                  Icons.favorite,
-                                  color: Styles().mainColor,
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 4.0),
+                                  child: Icon(
+                                    Icons.favorite,
+                                    color: Styles().mainColor,
+                                  ),
                                 ),
                               ],
                             )
@@ -302,8 +307,9 @@ class SettingsEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
         appBar: AppBar(
+          centerTitle: true,
           backgroundColor: Styles().backgroundColor,
           leading: BackButton(color: Styles().mainColor),
           actions: [

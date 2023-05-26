@@ -30,7 +30,7 @@ Future<DailyTrack> getNewDailyTrack(DateTime today) async {
       .map((e) => e.track)
       .toList();
   for (Track track in recommendation.tracks) {
-    if (!allPastTracks.contains(track)) {
+    if (!allPastTracks.map((e) => e.id).contains(track.id)) {
       DailyTrack newDailyTrack = DailyTrack(date: today, track: track);
       await db.Tracks.instance.saveDailyTrack(newDailyTrack);
 

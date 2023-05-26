@@ -16,12 +16,16 @@ class LoadingIndicator extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const CircularProgressIndicator(),
-        text != null
-            ? Text(
-                text!,
-                style: Styles().defaultText,
-              )
-            : const SizedBox.shrink()
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: text != null
+              ? Text(
+                  text!,
+                  style: Styles().defaultText,
+                  textAlign: TextAlign.center,
+                )
+              : const SizedBox.shrink(),
+        )
       ],
     ));
   }

@@ -4,6 +4,7 @@ import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/pages/calendar_page.dart';
 import 'package:daily_spotify/pages/settings_page.dart';
 import 'package:daily_spotify/styles.dart';
+import 'package:daily_spotify/widgets/custom_scaffold.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/brand_text_widget.dart';
 import 'package:daily_spotify/widgets/track_view_widget.dart';
@@ -22,8 +23,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
         body: Frame(
+            customPadding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
             showLogo: false,
             child: FutureBuilder(
               builder: (context, snapshot) {
@@ -42,31 +44,35 @@ class _HomePageState extends State<HomePage> {
                         as Color;
 
                     return TrackView(
-                        header: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const CalendarPage())),
-                              icon: Icon(
-                                Icons.calendar_month,
-                                color: Styles().mainColor,
+                        header: Padding(
+                          padding:
+                              const EdgeInsets.only(right: 10.0, left: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const CalendarPage())),
+                                icon: Icon(
+                                  Icons.calendar_month,
+                                  color: Styles().mainColor,
+                                ),
                               ),
-                            ),
-                            const BrandText(),
-                            IconButton(
-                              onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SettingsPage())),
-                              icon: Icon(
-                                Icons.settings,
-                                color: Styles().mainColor,
+                              const BrandText(),
+                              IconButton(
+                                onPressed: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SettingsPage())),
+                                icon: Icon(
+                                  Icons.settings,
+                                  color: Styles().mainColor,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         dailyTrack: dailyTrack,
                         track: track,

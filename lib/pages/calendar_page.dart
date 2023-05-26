@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/widgets/custom_scaffold.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/track_view_widget.dart';
 import 'package:daily_spotify/widgets/brand_text_widget.dart';
@@ -18,8 +19,9 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           'Calendar',
           style: Styles().largeText,
@@ -168,7 +170,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
 
                   if (!mounted) return;
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => Scaffold(
+                      builder: (context) => CustomScaffold(
                             body: Frame(
                               showLogo: false,
                               child: TrackView(
@@ -194,9 +196,15 @@ class _MonthCalendarState extends State<MonthCalendar> {
                             ),
                           )));
                 },
-                child: Image.network(
-                  dailyTrack.track.images.first.url,
-                ));
+                child: Image.network(dailyTrack.track.images.first.url,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+
+                  return Container(color: Styles().secondaryColor);
+                }));
           }
         }
         return CalendarText(
