@@ -21,12 +21,12 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
   List<String> seedGenres = [];
   List<Track> seedTracks = [];
 
-  AccessToken accessToken = await requestAccessToken(null);
+  AccessToken? accessToken = await requestAccessToken(null);
 
   // artist seed
   if (getMoreRecent == 0 || artistList.isEmpty) {
     List<Artist> artistList = await getUserTopItems(
-        accessToken: accessToken, type: Artist, timeRange: 'short_term');
+        accessToken: accessToken!, type: Artist, timeRange: 'short_term');
 
     if (artistList.isEmpty) {
       artistList = await getDefaultArtists(accessToken);
@@ -40,7 +40,7 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
   // genre seed
   if (getMoreRecent == 1 || genreList.isEmpty) {
     List<Artist> artistList = await getUserTopItems(
-        accessToken: accessToken, type: Artist, timeRange: 'short_term');
+        accessToken: accessToken!, type: Artist, timeRange: 'short_term');
 
     List<String> genreList = [];
     if (artistList.isEmpty) {
@@ -56,7 +56,7 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
 
   // track seed
   List<Track> trackList = await getUserTopItems(
-      accessToken: accessToken, type: Track, timeRange: 'short_term');
+      accessToken: accessToken!, type: Track, timeRange: 'short_term');
 
   if (trackList.isEmpty) {
     trackList = await getDefaultTracks(accessToken);

@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
 
   /// Returns a [Future<Map<String, dynamic>>] which contains the values,
   /// ['dailyTrack'] and ['averageColorOfImage']
-  Future<Map<String, dynamic>> getDailyTrack() async {
+  Future<Map<String, dynamic>?> getDailyTrack() async {
     // check if daily track has already been generated
     DateTime now = DateTime.now();
     DailyTrack? dailyTrack = await db.Tracks.instance.getDailyTrack(now);
@@ -99,9 +99,13 @@ class _HomePageState extends State<HomePage> {
       return {'dailyTrack': dailyTrack, 'averageColorOfImage': averageColor};
     }
 
-    DailyTrack newDailyTrack = await getNewDailyTrack(now);
+    if (!mounted) return null;
+    DailyTrack? newDailyTrack;
+    while (newDailyTrack == null) {
+      newDailyTrack = await getNewDailyTrack(context, now);
+    }
     Color averageColor =
-        await getAverageColor(newDailyTrack.track.images.last.url);
+        await getAverageColor(newDailyTrack!.track.images.last.url);
 
     return {'dailyTrack': newDailyTrack, 'averageColorOfImage': averageColor};
   }

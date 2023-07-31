@@ -74,14 +74,17 @@ Future<String?> requestUserAuth() async {
   }
 }
 
-/// Returns an [AccessToken]  that can be used to send requests to Spotify's WEB
+/// Returns an [AccessToken] that can be used to send requests to Spotify's WEB
 /// API. The method automatically refreshes the access token if needed.
+///
+/// If [null] is returned, you first need to use [requestUserAuth] as stated
+/// below:
 ///
 /// Before using this function you must request the user's permission with the
 /// function [requestUserAuth] which is the [authCode].
 /// You can only pass null as the [authCode] if an access token has already
 /// initially been requested.
-Future<AccessToken> requestAccessToken(String? authCode) async {
+Future<AccessToken?> requestAccessToken(String? authCode) async {
   AccessToken? accessToken = await db.Auth.instance.getAccessToken();
 
   if (accessToken == null) {
@@ -114,9 +117,7 @@ Future<AccessToken> requestAccessToken(String? authCode) async {
 
         return newAccessToken;
       } else if (response.statusCode == 400) {
-        authCode = await requestUserAuth();
-
-        return await getBrandNewAccessToken(authCode!);
+        return null;
       } else {
         throw Exception(
             'Response code was not 200, was ${response.statusCode}');

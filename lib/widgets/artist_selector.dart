@@ -53,10 +53,10 @@ class _ArtistSelectorState extends State<ArtistSelector> {
 
     // check to make sure artist list was already generated from genre selector
     if (initiallyEmpty) {
-      AccessToken accessToken = await spotify_auth.requestAccessToken(null);
+      AccessToken? accessToken = await spotify_auth.requestAccessToken(null);
 
       List<Artist> artistList =
-          await getUserTopItems(accessToken: accessToken, type: Artist);
+          await getUserTopItems(accessToken: accessToken!, type: Artist);
 
       if (artistList.isEmpty) {
         artistList = await getUserTopItems(

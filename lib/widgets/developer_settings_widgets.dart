@@ -31,13 +31,16 @@ class DeveloperSettingsWidgets extends StatelessWidget {
             child: const Text('Delete all daily tracks')),
         TextButton(
             onPressed: () async => getDailyTrackInfo(),
-            child: const Text('Get daily track info'))
+            child: const Text('Get daily track info')),
+        TextButton(
+            onPressed: () async => deleteTodaysDailyTrack(),
+            child: const Text('Delete today\'s daily track')),
       ],
     );
   }
 
   Future generateANewRecommendation() async {
-    AccessToken accessToken = await requestAccessToken(null);
+    AccessToken? accessToken = await requestAccessToken(null);
     List<Artist> initialSeedArtists =
         await db.Config.instance.getArtistConfig();
     List<String> initialSeedGenres = await db.Config.instance.getGenreConfig();
@@ -47,7 +50,7 @@ class DeveloperSettingsWidgets extends StatelessWidget {
         initialSeedArtists, initialSeedGenres, initialSeedTracks);
 
     Recommendation recommendation = await getRecommendations(
-        accessToken: accessToken,
+        accessToken: accessToken!,
         seedArtists: seeds['seedArtists'] as List<Artist>,
         seedGenres: seeds['seedGenres'] as List<String>,
         seedTracks: seeds['seedTracks'] as List<Track>,
@@ -79,7 +82,7 @@ class DeveloperSettingsWidgets extends StatelessWidget {
 
         // delay for too many requests
         await Future.delayed(Duration(milliseconds: millisecondDelay));
-        await getNewDailyTrack(date);
+        await getNewDailyTrack(context, date);
 
         daysBetweenGaps = 1;
         i++;
@@ -107,5 +110,9 @@ class DeveloperSettingsWidgets extends StatelessWidget {
     }
 
     print('Total daily tracks: ${allDailyTracks.length}');
+  }
+
+  void deleteTodaysDailyTrack() async {
+    await db.Tracks.instance.deleteDailyTrack(DateTime.now());
   }
 }

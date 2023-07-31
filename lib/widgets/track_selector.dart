@@ -55,9 +55,9 @@ class _TrackSelectorState extends State<TrackSelector> {
   }
 
   Future<List<Track>?> getItemList() async {
-    AccessToken accessToken = await spotify_auth.requestAccessToken(null);
+    AccessToken? accessToken = await spotify_auth.requestAccessToken(null);
     List<Track> trackList =
-        await getUserTopItems(accessToken: accessToken, type: Track);
+        await getUserTopItems(accessToken: accessToken!, type: Track);
 
     if (trackList.isEmpty) {
       trackList = await getUserTopItems(

@@ -4,6 +4,7 @@ import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/pages/setup_page.dart';
 import 'package:daily_spotify/pages/home_page.dart';
+import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
                 }
               }
 
-              return const CircularProgressIndicator();
+              return const Center(child: LoadingIndicator());
             }),
             future: db.Tracks.instance.getAllDailyTracks()));
   }

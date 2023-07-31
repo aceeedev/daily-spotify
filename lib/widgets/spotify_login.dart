@@ -4,9 +4,12 @@ import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/styles.dart';
+import 'package:daily_spotify/pages/home_page.dart';
 
 class SpotifyLogin extends StatefulWidget {
-  const SpotifyLogin({super.key});
+  SpotifyLogin({super.key, required this.inSetup, this.authCode});
+  final bool inSetup;
+  String? authCode;
 
   @override
   State<SpotifyLogin> createState() => _SpotifyLoginState();
@@ -14,6 +17,15 @@ class SpotifyLogin extends StatefulWidget {
 
 class _SpotifyLoginState extends State<SpotifyLogin> {
   bool loggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.authCode != null) {
+      refreshAuth(widget.authCode!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +45,17 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
                 String? authCode = await spotify_auth.requestUserAuth();
 
                 if (authCode != null) {
-                  await db.Auth.instance.saveAuthCode(authCode);
-
-                  // get initial access token
                   await spotify_auth.requestAccessToken(authCode);
 
-                  if (!mounted) return;
-                  context.read<SetupForm>().setFinishedStep(true);
-                  setState(() => loggedIn = true);
+                  if (widget.inSetup) {
+                    await db.Auth.instance.saveAuthCode(authCode);
+
+                    if (!mounted) return;
+                    context.read<SetupForm>().setFinishedStep(true);
+                    setState(() => loggedIn = true);
+                  } else {
+                    await refreshAuth(authCode);
+                  }
                 }
               },
               style: loggedIn
@@ -67,5 +82,14 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
         ),
       ],
     );
+  }
+
+  /// gets a new access token and redirects back to the home page
+  Future<void> refreshAuth(String authCode) async {
+    await spotify_auth.getBrandNewAccessToken(authCode);
+
+    if (!mounted) return;
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomePage()));
   }
 }

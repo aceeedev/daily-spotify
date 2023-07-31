@@ -53,10 +53,10 @@ class _GenreSelectorState extends State<GenreSelector> {
   }
 
   Future<bool> getAndAddGenres() async {
-    AccessToken accessToken = await spotify_auth.requestAccessToken(null);
+    AccessToken? accessToken = await spotify_auth.requestAccessToken(null);
 
     List<Artist> artistList =
-        await getUserTopItems(accessToken: accessToken, type: Artist);
+        await getUserTopItems(accessToken: accessToken!, type: Artist);
 
     if (artistList.isEmpty) {
       artistList = await getUserTopItems(

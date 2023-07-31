@@ -108,11 +108,15 @@ class Tracks {
     return _box!;
   }
 
+  /// returns a [String] that is the key for the daily track at the DateTime
+  /// [date]
+  String _dateKey(DateTime date) => DateFormat.yMd().format(date);
+
   Future<void> saveDailyTrack(DailyTrack dailyTrack) async =>
-      (await box).put(DateFormat.yMd().format(dailyTrack.date), dailyTrack);
+      (await box).put(_dateKey(dailyTrack.date), dailyTrack);
 
   Future<DailyTrack?> getDailyTrack(DateTime date) async =>
-      (await box).get(DateFormat.yMd().format(date));
+      (await box).get(_dateKey(date));
 
   Future<List<DailyTrack>> getAllDailyTracks() async {
     List<DailyTrack> allDailyTracks =
@@ -122,6 +126,9 @@ class Tracks {
 
     return allDailyTracks;
   }
+
+  Future<void> deleteDailyTrack(DateTime date) async =>
+      (await box).delete(_dateKey(date));
 
   Future<void> deleteAllDailyTracks() async => (await box).clear();
 }
