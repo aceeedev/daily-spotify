@@ -31,13 +31,14 @@ class _SettingsPageState extends State<SettingsPage> {
             'Settings',
             style: Styles().largeText,
           ),
-          actions: [
+          // TODO: Add donations through in-app purchases <3
+          /*actions: [
             TextButton.icon(
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const DonationPage())),
                 label: const Text('Donate'),
                 icon: const Icon(Icons.favorite_border))
-          ],
+          ],*/
           backgroundColor: Styles().backgroundColor,
           leading: BackButton(color: Styles().mainColor),
         ),

@@ -21,11 +21,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const double iconSize = 30.0;
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
         body: Frame(
-            customPadding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+            customPadding: const EdgeInsets.all(0.0),
             showLogo: false,
             child: FutureBuilder(
               builder: (context, snapshot) {
@@ -45,8 +47,8 @@ class _HomePageState extends State<HomePage> {
 
                     return TrackView(
                         header: Padding(
-                          padding:
-                              const EdgeInsets.only(right: 10.0, left: 10.0),
+                          padding: const EdgeInsets.only(
+                              right: 10.0, left: 10.0, top: 16.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -58,6 +60,7 @@ class _HomePageState extends State<HomePage> {
                                 icon: Icon(
                                   Icons.calendar_month,
                                   color: Styles().mainColor,
+                                  size: iconSize,
                                 ),
                               ),
                               const BrandText(),
@@ -69,6 +72,7 @@ class _HomePageState extends State<HomePage> {
                                 icon: Icon(
                                   Icons.settings,
                                   color: Styles().mainColor,
+                                  size: iconSize,
                                 ),
                               ),
                             ],

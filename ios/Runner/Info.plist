@@ -54,11 +54,12 @@
 	</array>
 	<key>CFBundleURLSchemes</key>
 	<array>
-	<string>com.example.daily-spotify</string>
+		<string>com.example.daily-spotify</string>
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>https</string>
+		<string>spotify</string>
 	</array>
 </dict>
 </plist>

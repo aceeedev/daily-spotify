@@ -90,13 +90,25 @@ class _CalendarPageState extends State<CalendarPage> {
                   }
                 }
 
+                // flip daily tracks and months since ListView starts at bottom
+                //   and is reversed
+                dailyTracksByMonth = dailyTracksByMonth.reversed.toList();
+                monthsBetweenFirstDailyTrackAndNow =
+                    monthsBetweenFirstDailyTrackAndNow.reversed.toList();
+
                 return ListView.builder(
+                    reverse: true,
                     itemCount: monthsBetweenFirstDailyTrackAndNow.length,
                     itemBuilder: (context, index) => Column(
                           children: [
                             Padding(
-                              padding:
-                                  EdgeInsets.only(top: index != 0 ? 12.0 : 0),
+                              padding: EdgeInsets.only(
+                                  top: index !=
+                                          monthsBetweenFirstDailyTrackAndNow
+                                                  .length -
+                                              1
+                                      ? 16.0
+                                      : 0.0),
                               child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
@@ -172,6 +184,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => CustomScaffold(
                             body: Frame(
+                              customPadding: const EdgeInsets.all(0.0),
                               showLogo: false,
                               child: TrackView(
                                   header: Row(
