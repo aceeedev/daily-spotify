@@ -128,7 +128,7 @@ Future<AccessToken?> requestAccessToken(String? authCode) async {
   }
 }
 
-Future<AccessToken> getBrandNewAccessToken(String authCode) async {
+Future<AccessToken?> getBrandNewAccessToken(String authCode) async {
   final url = Uri.https('accounts.spotify.com', '/api/token');
   final form = {
     'code': authCode,
@@ -154,6 +154,8 @@ Future<AccessToken> getBrandNewAccessToken(String authCode) async {
     await db.Auth.instance.saveAccessToken(newAccessToken);
 
     return newAccessToken;
+  } else if (response.statusCode == 400) {
+    return null;
   } else {
     throw Exception('Response code was not 200, was ${response.statusCode}');
   }

@@ -6,6 +6,7 @@ import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
+import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/filter_by_genre.dart';
 import 'package:daily_spotify/styles.dart';
 
@@ -53,7 +54,7 @@ class _GenreSelectorState extends State<GenreSelector> {
   }
 
   Future<bool> getAndAddGenres() async {
-    AccessToken? accessToken = await spotify_auth.requestAccessToken(null);
+    AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
 
     List<Artist> artistList =
         await getUserTopItems(accessToken: accessToken!, type: Artist);
@@ -178,7 +179,10 @@ class _GenreButtonState extends State<GenreButton> {
           style: widget.selected
               ? Styles().selectedElevatedButtonStyle
               : Styles().unselectedElevatedButtonStyle,
-          child: Text(widget.genre.replaceAll('-', ' '))),
+          child: Text(
+            widget.genre.replaceAll('-', ' '),
+            style: Styles().subtitleText,
+          )),
     );
   }
 }

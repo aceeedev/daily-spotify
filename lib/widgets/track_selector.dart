@@ -6,6 +6,7 @@ import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
+import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/default_config.dart';
 import 'package:daily_spotify/styles.dart';
 
@@ -55,7 +56,7 @@ class _TrackSelectorState extends State<TrackSelector> {
   }
 
   Future<List<Track>?> getItemList() async {
-    AccessToken? accessToken = await spotify_auth.requestAccessToken(null);
+    AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
     List<Track> trackList =
         await getUserTopItems(accessToken: accessToken!, type: Track);
 

@@ -92,12 +92,14 @@ class _CalendarPageState extends State<CalendarPage> {
 
                 // flip daily tracks and months since ListView starts at bottom
                 //   and is reversed
-                dailyTracksByMonth = dailyTracksByMonth.reversed.toList();
-                monthsBetweenFirstDailyTrackAndNow =
-                    monthsBetweenFirstDailyTrackAndNow.reversed.toList();
+                if (monthsBetweenFirstDailyTrackAndNow.length > 2) {
+                  dailyTracksByMonth = dailyTracksByMonth.reversed.toList();
+                  monthsBetweenFirstDailyTrackAndNow =
+                      monthsBetweenFirstDailyTrackAndNow.reversed.toList();
+                }
 
                 return ListView.builder(
-                    reverse: true,
+                    reverse: monthsBetweenFirstDailyTrackAndNow.length > 2,
                     itemCount: monthsBetweenFirstDailyTrackAndNow.length,
                     itemBuilder: (context, index) => Column(
                           children: [

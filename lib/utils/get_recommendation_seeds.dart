@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
+import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/filter_by_genre.dart';
 import 'package:daily_spotify/utils/default_config.dart';
+import 'package:flutter/material.dart';
 
 /// Returns curated [Future<Map<String, dynamic>>] of the recommendation seeds
 /// to be used in [getRecommendations].
@@ -11,6 +13,7 @@ import 'package:daily_spotify/utils/default_config.dart';
 /// 'seedGenres': List<String>
 /// 'seedTracks': List<Track>
 Future<Map<String, List<dynamic>>> getRecommendationSeeds(
+    BuildContext context,
     List<Artist> artistList,
     List<String> genreList,
     List<Track> trackList) async {
@@ -21,7 +24,7 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
   List<String> seedGenres = [];
   List<Track> seedTracks = [];
 
-  AccessToken? accessToken = await requestAccessToken(null);
+  AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
 
   // artist seed
   if (getMoreRecent == 0 || artistList.isEmpty) {

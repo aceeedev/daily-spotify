@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/models/daily_track.dart';
+import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
 import 'package:daily_spotify/utils/get_new_daily_track.dart';
 
@@ -21,7 +22,7 @@ class DeveloperSettingsWidgets extends StatelessWidget {
     return Column(
       children: [
         TextButton(
-            onPressed: () async => generateANewRecommendation(),
+            onPressed: () async => generateANewRecommendation(context),
             child: const Text('Generate a new recommendation')),
         TextButton(
             onPressed: () async => generateNewDailyTracks(context),
@@ -39,15 +40,15 @@ class DeveloperSettingsWidgets extends StatelessWidget {
     );
   }
 
-  Future generateANewRecommendation() async {
-    AccessToken? accessToken = await requestAccessToken(null);
+  Future generateANewRecommendation(BuildContext context) async {
+    AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
     List<Artist> initialSeedArtists =
         await db.Config.instance.getArtistConfig();
     List<String> initialSeedGenres = await db.Config.instance.getGenreConfig();
     List<Track> initialSeedTracks = await db.Config.instance.getTrackConfig();
 
     Map<String, dynamic> seeds = await getRecommendationSeeds(
-        initialSeedArtists, initialSeedGenres, initialSeedTracks);
+        context, initialSeedArtists, initialSeedGenres, initialSeedTracks);
 
     Recommendation recommendation = await getRecommendations(
         accessToken: accessToken!,

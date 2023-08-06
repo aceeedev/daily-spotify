@@ -74,7 +74,7 @@ class Styles {
   MaterialColor get accentColor => _accentColor;
 
   // buttons
-  static const _unselectedElevation = 1.5;
+  static const _unselectedElevation = 2.0;
   static final _selectedColor = _secondaryColor[900];
   static const _selectedElevation = 0.1;
   static final _shadowColor = _secondaryColor[200];

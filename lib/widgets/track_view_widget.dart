@@ -22,7 +22,7 @@ class TrackView extends StatelessWidget {
   final Track track;
   final Color averageColorOfImage;
 
-  static const List<int> flexValues = [4, 50, 20, 10];
+  static const List<int> flexValues = [4, 46, 20, 7];
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class TrackView extends StatelessWidget {
             0.0,
             0.3,
             0.4,
-            0.75,
+            0.7,
           ],
           colors: [
             Styles().backgroundColor,
@@ -72,11 +72,13 @@ class TrackView extends StatelessWidget {
                     track.name,
                     style: Styles().titleText,
                     textAlign: TextAlign.center,
+                    softWrap: true,
                   ),
                   Text(
                     track.getArtists(),
                     style: Styles().subtitleText,
                     textAlign: TextAlign.center,
+                    softWrap: true,
                   ),
                 ],
               ),
@@ -101,9 +103,7 @@ class TrackView extends StatelessWidget {
                     await openSong(track.spotifyHref);
                   }
                 },
-                style: Styles().unselectedElevatedButtonStyle.copyWith(
-                    fixedSize:
-                        MaterialStateProperty.all<Size>(const Size(150, 25))),
+                style: Styles().unselectedElevatedButtonStyle,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,

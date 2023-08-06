@@ -3,9 +3,7 @@ import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
-import 'package:daily_spotify/widgets/custom_scaffold.dart';
-import 'package:daily_spotify/widgets/frame_widget.dart';
-import 'package:daily_spotify/widgets/spotify_login.dart';
+import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 
 /// Returns a new unique [DailyTrack]. Also saves the daily track to the
 /// database.
@@ -15,39 +13,16 @@ import 'package:daily_spotify/widgets/spotify_login.dart';
 ///
 /// Takes in the parameter [today] which is a [DateTime] and is used as the date
 /// of the daily track.
-Future<DailyTrack?> getNewDailyTrack(
+Future<DailyTrack> getNewDailyTrack(
     BuildContext context, DateTime today) async {
-  // generate new recommendations
-  AccessToken? accessToken = await requestAccessToken(null);
-
-  // request user auth if expired
-  if (accessToken == null) {
-    String? authCode = await requestUserAuth();
-
-    await Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => CustomScaffold(
-                body: Frame(
-              showLogo: true,
-              child: SpotifyLogin(
-                inSetup: false,
-                authCode: authCode,
-              ),
-            ))));
-
-    if (authCode == null) {
-      return null;
-    }
-    await getBrandNewAccessToken(authCode);
-
-    accessToken = await requestAccessToken(authCode);
-  }
+  AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
 
   List<Artist> initialSeedArtists = await db.Config.instance.getArtistConfig();
   List<String> initialSeedGenres = await db.Config.instance.getGenreConfig();
   List<Track> initialSeedTracks = await db.Config.instance.getTrackConfig();
 
   Map<String, dynamic> seeds = await getRecommendationSeeds(
-      initialSeedArtists, initialSeedGenres, initialSeedTracks);
+      context, initialSeedArtists, initialSeedGenres, initialSeedTracks);
 
   Recommendation recommendation = await getRecommendations(
       accessToken: accessToken!,
