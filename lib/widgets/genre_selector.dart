@@ -2,7 +2,6 @@ import 'package:daily_spotify/utils/default_config.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:daily_spotify/backend/spotify_api/auth.dart' as spotify_auth;
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
@@ -57,7 +56,7 @@ class _GenreSelectorState extends State<GenreSelector> {
     AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
 
     List<Artist> artistList =
-        await getUserTopItems(accessToken: accessToken!, type: Artist);
+        await getUserTopItems(accessToken: accessToken, type: Artist);
 
     if (artistList.isEmpty) {
       artistList = await getUserTopItems(

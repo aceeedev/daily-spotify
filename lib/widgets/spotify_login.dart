@@ -68,8 +68,10 @@ class _SpotifyLoginState extends State<SpotifyLogin> {
                   Padding(
                     padding: const EdgeInsets.only(
                         right: 8.0, top: 8.0, bottom: 8.0),
-                    child: Image.asset('assets/Spotify_Icon_RGB_Green.png',
-                        width: 32, height: 32),
+                    child: Image.asset(
+                        'assets/spotify/Spotify_Icon_RGB_Green.png',
+                        width: 32,
+                        height: 32),
                   ),
                   Text(
                     'Login with Spotify',

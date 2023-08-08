@@ -6,7 +6,6 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/styles.dart';
-import 'package:daily_spotify/pages/donation_page.dart';
 import 'package:daily_spotify/widgets/custom_scaffold.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/genre_selector.dart';
