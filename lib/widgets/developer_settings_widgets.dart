@@ -51,7 +51,7 @@ class DeveloperSettingsWidgets extends StatelessWidget {
         context, initialSeedArtists, initialSeedGenres, initialSeedTracks);
 
     Recommendation recommendation = await getRecommendations(
-        accessToken: accessToken!,
+        accessToken: accessToken,
         seedArtists: seeds['seedArtists'] as List<Artist>,
         seedGenres: seeds['seedGenres'] as List<String>,
         seedTracks: seeds['seedTracks'] as List<Track>,

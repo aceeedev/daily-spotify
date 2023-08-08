@@ -17,7 +17,7 @@ class SpotifyAttribute extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/Spotify_Logo_RGB_Green.png',
+              'assets/spotify/Spotify_Logo_RGB_Green.png',
               height: 24.0,
             ),
             Text(

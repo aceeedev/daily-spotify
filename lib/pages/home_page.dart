@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
       newDailyTrack = await getNewDailyTrack(context, now);
     }
     Color averageColor =
-        await getAverageColor(newDailyTrack!.track.images.last.url);
+        await getAverageColor(newDailyTrack.track.images.last.url);
 
     return {'dailyTrack': newDailyTrack, 'averageColorOfImage': averageColor};
   }

@@ -115,8 +115,10 @@ class TrackView extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 6.0),
-                      child: Image.asset('assets/Spotify_Icon_RGB_Green.png',
-                          width: 32, height: 32),
+                      child: Image.asset(
+                          'assets/spotify/Spotify_Icon_RGB_Green.png',
+                          width: 32,
+                          height: 32),
                     ),
                   ],
                 ),
@@ -155,7 +157,6 @@ class TrackView extends StatelessWidget {
   }
 
   Future openSong(String uri) async {
-    print(uri);
     Uri url = Uri.parse(uri);
 
     if (!await launchUrl(url)) {
