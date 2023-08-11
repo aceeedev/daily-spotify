@@ -7,6 +7,7 @@ import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/filter_by_genre.dart';
+import 'package:daily_spotify/utils/evenly_distribute_lists.dart';
 import 'package:daily_spotify/styles.dart';
 
 class GenreSelector extends StatefulWidget {
@@ -36,17 +37,21 @@ class _GenreSelectorState extends State<GenreSelector> {
                       child: Text('An error has occurred, ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   return Expanded(
-                    child: SingleChildScrollView(
-                      child: Wrap(
-                        children: getGenreButtons(
-                            context.read<SetupForm>().totalGenreList),
+                    child: Center(
+                      child: SingleChildScrollView(
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          children: getGenreButtons(
+                              context.read<SetupForm>().totalGenreList),
+                        ),
                       ),
                     ),
                   );
                 }
               }
 
-              return const LoadingIndicator(text: 'Finding your top genres...');
+              return const Expanded(
+                  child: LoadingIndicator(text: 'Finding your top genres...'));
             }),
       ],
     );
@@ -55,14 +60,20 @@ class _GenreSelectorState extends State<GenreSelector> {
   Future<bool> getAndAddGenres() async {
     AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
 
-    List<Artist> artistList =
-        await getUserTopItems(accessToken: accessToken, type: Artist);
+    List<Artist> shortTermList = await getUserTopItems(
+        accessToken: accessToken, type: Artist, timeRange: 'short_term');
+    List<Artist> mediumTermList = await getUserTopItems(
+        accessToken: accessToken, type: Artist, timeRange: 'medium_term');
+    List<Artist> longTermList = await getUserTopItems(
+        accessToken: accessToken, type: Artist, timeRange: 'long_term');
 
-    if (artistList.isEmpty) {
-      artistList = await getUserTopItems(
-          accessToken: accessToken, type: Artist, timeRange: 'short_term');
-    }
-    // get artists from top global 50 songs on Spotify
+    List<Artist> artistList = evenlyDistributeLists(
+        [mediumTermList, longTermList, shortTermList],
+        (List<dynamic> combinedList, dynamic element) => (combinedList
+            .map((e) => (e as Artist).id)
+            .contains(element.id))).cast<Artist>().toList();
+
+    // get artists from top global 50 songs on Spotify if needed
     if (artistList.isEmpty) {
       if (!mounted) return false;
 
@@ -115,25 +126,11 @@ class _GenreSelectorState extends State<GenreSelector> {
   }
 
   List<Widget> getGenreButtons(List<String> genreList) {
-    bool initialSelectedGenresExist =
-        context.read<SetupForm>().selectedGenreList.isNotEmpty;
-
-    List<GenreButton> genreButtons = [];
-    for (int i = 0; i < genreList.length; i++) {
-      String genre = genreList[i];
-
-      // add remaining genres if needed to get 3 selected genres
-      if (i < 3 && !initialSelectedGenresExist) {
-        context.read<SetupForm>().addToSelectedGenreList(genre);
-      }
-
-      genreButtons.add(GenreButton(
-          genre: genre,
-          selected:
-              context.read<SetupForm>().selectedGenreList.contains(genre)));
-    }
-
-    return genreButtons;
+    return genreList
+        .map((e) => GenreButton(
+            genre: e,
+            selected: context.read<SetupForm>().selectedGenreList.contains(e)))
+        .toList();
   }
 }
 

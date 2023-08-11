@@ -7,6 +7,8 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 ///
 /// You must provide an [accessToken], [seedArtists], [seedGenres], and
 /// [seedTracks].
+///
+/// [Spotify API Docs](https://developer.spotify.com/documentation/web-api/reference/get-recommendations)
 Future<Recommendation> getRecommendations({
   required AccessToken accessToken,
   required List<Artist> seedArtists,

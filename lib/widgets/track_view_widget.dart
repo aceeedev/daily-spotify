@@ -26,7 +26,7 @@ class TrackView extends StatelessWidget {
   final Color averageColorOfImage;
 
   static const List<int> flexValues = [4, 46, 20, 7];
-  static const List<String> emojiOptions = ['😮', '🔥', '❤️', '🕺'];
+  static const List<String> emojiOptions = ['😮', '🔥', '❤️', '💃', '🕺'];
 
   final GlobalKey openInSpotifyKey = GlobalKey();
   final GlobalKey artistTextKey = GlobalKey();
@@ -191,6 +191,7 @@ class TrackView extends StatelessWidget {
   }
 }
 
+/// The row of icon buttons for options on the track view.
 class _IconButtonRow extends StatelessWidget {
   _IconButtonRow({
     super.key,
@@ -220,7 +221,7 @@ class _IconButtonRow extends StatelessWidget {
         IconButton(
             onPressed: () async {
               ShareResult result = await Share.shareWithResult(
-                  'My pitch of ${DateFormat('MMM d').format(dailyTrack.date)}\n${track.spotifyHref}');
+                  'My ${dailyTrack.reaction == null ? '' : '${dailyTrack.reaction} '}pitch of ${DateFormat('MMM d').format(dailyTrack.date)}\n${track.spotifyHref}');
 
               if (result.status == ShareResultStatus.dismissed) {
                 final snackBar = SnackBar(
@@ -238,6 +239,7 @@ class _IconButtonRow extends StatelessWidget {
   }
 }
 
+/// The emoji buttons are used for the reactions menu.
 class _EmojiButton extends StatelessWidget {
   const _EmojiButton(
       {super.key, required this.emoji, required this.dailyTrack});

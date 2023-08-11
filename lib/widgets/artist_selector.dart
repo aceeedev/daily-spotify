@@ -39,8 +39,9 @@ class _ArtistSelectorState extends State<ArtistSelector> {
                 }
               }
 
-              return const LoadingIndicator(
-                  text: 'Finding your top artists...');
+              return const Expanded(
+                child: LoadingIndicator(text: 'Finding your top artists...'),
+              );
             }),
       ],
     );
@@ -83,20 +84,7 @@ class _ArtistSelectorState extends State<ArtistSelector> {
     }
 
     if (!mounted) return null;
-    bool initialSelectedArtistsExist =
-        context.read<SetupForm>().selectedArtistList.isNotEmpty;
     List<Artist> totalArtistList = context.read<SetupForm>().totalArtistList;
-
-    if (!initialSelectedArtistsExist) {
-      for (int i = 0;
-          i < (totalArtistList.length < 3 ? totalArtistList.length : 3);
-          i++) {
-        Artist artist = totalArtistList[i];
-
-        // add remaining artists if needed to get 3 selected artists
-        context.read<SetupForm>().addToSelectedArtistList(artist);
-      }
-    }
 
     return totalArtistList;
   }

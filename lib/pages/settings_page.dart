@@ -273,7 +273,7 @@ class SettingsListView extends StatelessWidget {
               int lastCommaIndex = itemsString.lastIndexOf(',');
 
               itemsString =
-                  '${itemsString.substring(0, lastCommaIndex)}, and${itemsString.substring(lastCommaIndex + 1)}';
+                  '${itemsString.substring(0, lastCommaIndex)}${items.length > 2 ? ',' : ''} and${itemsString.substring(lastCommaIndex + 1)}';
             }
           }
 

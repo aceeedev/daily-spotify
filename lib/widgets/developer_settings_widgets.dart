@@ -9,7 +9,7 @@ import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart'
 import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
 import 'package:daily_spotify/utils/get_new_daily_track.dart';
 
-/// A widget that contains developer settings
+/// A widget that contains developer settings.
 ///
 /// Should NEVER be apart of the release version of the app.
 class DeveloperSettingsWidgets extends StatelessWidget {
