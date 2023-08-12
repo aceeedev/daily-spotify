@@ -7,7 +7,7 @@ import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/default_config.dart';
-import 'package:daily_spotify/utils/evenly_distribute_lists.dart';
+import 'package:daily_spotify/utils/combine_top_items.dart';
 import 'package:daily_spotify/styles.dart';
 
 class TrackSelector extends StatefulWidget {
@@ -59,19 +59,8 @@ class _TrackSelectorState extends State<TrackSelector> {
   Future<List<Track>?> getItemList() async {
     AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
 
-    List<Track> shortTermList = await getUserTopItems(
-        accessToken: accessToken, type: Track, timeRange: 'short_term');
-    List<Track> mediumTermList = await getUserTopItems(
-        accessToken: accessToken, type: Track, timeRange: 'medium_term');
-    List<Track> longTermList = await getUserTopItems(
-        accessToken: accessToken, type: Track, timeRange: 'long_term');
-
-    List<Track> trackList = evenlyDistributeLists(
-            [mediumTermList, longTermList, shortTermList],
-            (List<dynamic> combinedList, dynamic element) =>
-                (combinedList.map((e) => (e as Track).id).contains(element.id)))
-        .cast<Track>()
-        .toList();
+    List<Track> trackList =
+        (await combineTopItems(accessToken, Track)).cast<Track>().toList();
 
     // get tracks from top global 50 songs on Spotify if needed
     if (trackList.isEmpty) {

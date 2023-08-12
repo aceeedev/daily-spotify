@@ -7,6 +7,7 @@ import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/default_config.dart';
+import 'package:daily_spotify/utils/combine_top_items.dart';
 import 'package:daily_spotify/styles.dart';
 
 class ArtistSelector extends StatefulWidget {
@@ -58,12 +59,8 @@ class _ArtistSelectorState extends State<ArtistSelector> {
           await requestAccessTokenWithoutAuthCode(context);
 
       List<Artist> artistList =
-          await getUserTopItems(accessToken: accessToken, type: Artist);
+          (await combineTopItems(accessToken, Artist)).cast<Artist>().toList();
 
-      if (artistList.isEmpty) {
-        artistList = await getUserTopItems(
-            accessToken: accessToken, type: Artist, timeRange: 'short_term');
-      }
       if (artistList.isEmpty) {
         artistList = await getDefaultArtists(accessToken);
       }

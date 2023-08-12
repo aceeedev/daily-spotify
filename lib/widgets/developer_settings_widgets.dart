@@ -83,7 +83,7 @@ class DeveloperSettingsWidgets extends StatelessWidget {
 
         // delay for too many requests
         await Future.delayed(Duration(milliseconds: millisecondDelay));
-        await getNewDailyTrack(context, date);
+        await getNewDailyTrack(context, date, 0);
 
         daysBetweenGaps = 1;
         i++;

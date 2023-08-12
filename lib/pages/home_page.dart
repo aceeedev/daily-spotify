@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
     if (!mounted) return null;
     DailyTrack? newDailyTrack;
     while (newDailyTrack == null) {
-      newDailyTrack = await getNewDailyTrack(context, now);
+      newDailyTrack = await getNewDailyTrack(context, now, 0);
     }
     Color averageColor =
         await getAverageColor(newDailyTrack.track.images.last.url);

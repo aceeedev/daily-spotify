@@ -11,7 +11,7 @@ Future<AccessToken> requestAccessTokenWithoutAuthCode(
   AccessToken? accessToken = await requestAccessToken(null);
 
   // request user auth if expired
-  if (accessToken == null) {
+  if (accessToken == null || accessToken.expiresAt.isBefore(DateTime.now())) {
     String? authCode = await requestUserAuth();
 
     await Navigator.of(context).pushReplacement(MaterialPageRoute(

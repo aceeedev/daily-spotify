@@ -1,4 +1,7 @@
 import 'dart:io' show Platform;
+import 'package:daily_spotify/pages/home_page.dart';
+import 'package:daily_spotify/utils/get_new_daily_track.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -7,9 +10,15 @@ import 'package:share_plus/share_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
-import 'package:daily_spotify/backend/database_manager.dart' as DB;
+import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/providers/track_view_provider.dart';
+
+extension DateOnlyCompare on DateTime {
+  bool isSameDate(DateTime other) {
+    return year == other.year && month == other.month && day == other.day;
+  }
+}
 
 /// Returns a widget of a stylized track view.
 /// Requires
@@ -207,12 +216,20 @@ class _IconButtonRow extends StatelessWidget {
   final double iconSize = 24.0;
   final Color iconColor = Styles().mainColor;
 
+  static const int maxNumberOfReshuffles = 1;
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        if (dailyTrack.timesReshuffled < maxNumberOfReshuffles &&
+            dailyTrack.date.isSameDate(DateTime.now()))
+          IconButton(
+            onPressed: () => _showReshuffleDialog(context),
+            icon: Icon(Icons.replay, color: iconColor, size: iconSize),
+          ),
         IconButton(
           onPressed: () =>
               context.read<TrackViewProvider>().switchEmojiReactionClicked(),
@@ -237,6 +254,78 @@ class _IconButtonRow extends StatelessWidget {
       ],
     );
   }
+
+  Future<void> _showReshuffleDialog(BuildContext context) async {
+    final int numOfTimesUserCanReshuffle =
+        maxNumberOfReshuffles - dailyTrack.timesReshuffled;
+
+    const String title = 'Reshuffle?';
+    final String content =
+        'Warning: you will lose today\'s pitch and you can only reshuffle $numOfTimesUserCanReshuffle more time${numOfTimesUserCanReshuffle > 1 ? 's' : ''}.';
+    const String yesText = 'Reshuffle';
+    const String noText = 'Never mind';
+
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => (Platform.isIOS
+            ? CupertinoAlertDialog(
+                title: const Text(title),
+                content: Text(content),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    onPressed: () => Navigator.pop(context, true),
+                    isDestructiveAction: true,
+                    child: const Text(yesText),
+                  ),
+                  CupertinoDialogAction(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: const Text(noText),
+                  )
+                ],
+              )
+            : AlertDialog(
+                backgroundColor: Styles().backgroundColor,
+                title: Text(
+                  title,
+                  style: Styles().subtitleText,
+                ),
+                content: Text(
+                  content,
+                  style: Styles().defaultText,
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    style: Styles().unselectedElevatedButtonStyle,
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text(
+                      yesText,
+                      style: Styles().defaultText,
+                    ),
+                  ),
+                  TextButton(
+                    style: Styles().unselectedElevatedButtonStyle,
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(
+                      noText,
+                      style: Styles().defaultText,
+                    ),
+                  ),
+                ],
+              ))).then((value) async {
+      if (value == null) return;
+
+      if (value) {
+        await db.Tracks.instance.deleteDailyTrack(dailyTrack.date);
+        await getNewDailyTrack(
+            context, dailyTrack.date, dailyTrack.timesReshuffled + 1);
+
+        context.read<TrackViewProvider>().setEmojiReactionClicked(false);
+
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomePage()));
+      }
+    });
+  }
 }
 
 /// The emoji buttons are used for the reactions menu.
@@ -254,7 +343,7 @@ class _EmojiButton extends StatelessWidget {
           updatedDailyTrack.reaction =
               dailyTrack.reaction != emoji ? emoji : null;
 
-          await DB.Tracks.instance.saveDailyTrack(updatedDailyTrack);
+          await db.Tracks.instance.saveDailyTrack(updatedDailyTrack);
 
           context.read<TrackViewProvider>().switchEmojiReactionClicked();
         },

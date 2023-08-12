@@ -7,7 +7,7 @@ import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/filter_by_genre.dart';
-import 'package:daily_spotify/utils/evenly_distribute_lists.dart';
+import 'package:daily_spotify/utils/combine_top_items.dart';
 import 'package:daily_spotify/styles.dart';
 
 class GenreSelector extends StatefulWidget {
@@ -60,18 +60,8 @@ class _GenreSelectorState extends State<GenreSelector> {
   Future<bool> getAndAddGenres() async {
     AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
 
-    List<Artist> shortTermList = await getUserTopItems(
-        accessToken: accessToken, type: Artist, timeRange: 'short_term');
-    List<Artist> mediumTermList = await getUserTopItems(
-        accessToken: accessToken, type: Artist, timeRange: 'medium_term');
-    List<Artist> longTermList = await getUserTopItems(
-        accessToken: accessToken, type: Artist, timeRange: 'long_term');
-
-    List<Artist> artistList = evenlyDistributeLists(
-        [mediumTermList, longTermList, shortTermList],
-        (List<dynamic> combinedList, dynamic element) => (combinedList
-            .map((e) => (e as Artist).id)
-            .contains(element.id))).cast<Artist>().toList();
+    List<Artist> artistList =
+        (await combineTopItems(accessToken, Artist)).cast<Artist>().toList();
 
     // get artists from top global 50 songs on Spotify if needed
     if (artistList.isEmpty) {
