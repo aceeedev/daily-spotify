@@ -5,7 +5,9 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 /// Returns a [List] of [String] genres that can be used as a parameter for
 /// [getRecommendations].
 ///
-/// You must provide an [accessToken].
+/// You must provide an [accessToken].\
+///
+/// [Spotify API Docs](https://developer.spotify.com/documentation/web-api/reference/get-recommendation-genres)
 Future<List<String>> getAvailableGenreSeeds(
     {required AccessToken accessToken}) async {
   final url =

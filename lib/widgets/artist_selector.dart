@@ -7,6 +7,7 @@ import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/default_config.dart';
+import 'package:daily_spotify/utils/combine_top_items.dart';
 import 'package:daily_spotify/styles.dart';
 
 class ArtistSelector extends StatefulWidget {
@@ -39,8 +40,9 @@ class _ArtistSelectorState extends State<ArtistSelector> {
                 }
               }
 
-              return const LoadingIndicator(
-                  text: 'Finding your top artists...');
+              return const Expanded(
+                child: LoadingIndicator(text: 'Finding your top artists...'),
+              );
             }),
       ],
     );
@@ -57,12 +59,8 @@ class _ArtistSelectorState extends State<ArtistSelector> {
           await requestAccessTokenWithoutAuthCode(context);
 
       List<Artist> artistList =
-          await getUserTopItems(accessToken: accessToken, type: Artist);
+          (await combineTopItems(accessToken, Artist)).cast<Artist>().toList();
 
-      if (artistList.isEmpty) {
-        artistList = await getUserTopItems(
-            accessToken: accessToken, type: Artist, timeRange: 'short_term');
-      }
       if (artistList.isEmpty) {
         artistList = await getDefaultArtists(accessToken);
       }
@@ -83,20 +81,7 @@ class _ArtistSelectorState extends State<ArtistSelector> {
     }
 
     if (!mounted) return null;
-    bool initialSelectedArtistsExist =
-        context.read<SetupForm>().selectedArtistList.isNotEmpty;
     List<Artist> totalArtistList = context.read<SetupForm>().totalArtistList;
-
-    if (!initialSelectedArtistsExist) {
-      for (int i = 0;
-          i < (totalArtistList.length < 3 ? totalArtistList.length : 3);
-          i++) {
-        Artist artist = totalArtistList[i];
-
-        // add remaining artists if needed to get 3 selected artists
-        context.read<SetupForm>().addToSelectedArtistList(artist);
-      }
-    }
 
     return totalArtistList;
   }

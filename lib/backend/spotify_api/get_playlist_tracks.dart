@@ -8,6 +8,8 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 /// You must provide an [accessToken].
 ///
 /// This is a custom function that uses Spotify's Get Playlist endpoint
+///
+/// [Spotify API Docs](https://developer.spotify.com/documentation/web-api/reference/get-playlist)
 Future<List<Track>> getPlaylistTracks(
     {required AccessToken accessToken, required String playlistID}) async {
   final url = Uri.https('api.spotify.com', '/v1/playlists/$playlistID');

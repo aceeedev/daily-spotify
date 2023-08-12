@@ -13,8 +13,11 @@ import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart'
 ///
 /// Takes in the parameter [today] which is a [DateTime] and is used as the date
 /// of the daily track.
+///
+/// The parameter [numberOfReshuffles] which is an [int] will be passed to the
+/// daily track that is returned.
 Future<DailyTrack> getNewDailyTrack(
-    BuildContext context, DateTime today) async {
+    BuildContext context, DateTime today, int numberOfReshuffles) async {
   AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
 
   List<Artist> initialSeedArtists = await db.Config.instance.getArtistConfig();
@@ -37,7 +40,8 @@ Future<DailyTrack> getNewDailyTrack(
       .toList();
   for (Track track in recommendation.tracks) {
     if (!allPastTracks.map((e) => e.id).contains(track.id)) {
-      DailyTrack newDailyTrack = DailyTrack(date: today, track: track);
+      DailyTrack newDailyTrack = DailyTrack(
+          date: today, track: track, timesReshuffled: numberOfReshuffles);
       await db.Tracks.instance.saveDailyTrack(newDailyTrack);
 
       return newDailyTrack;

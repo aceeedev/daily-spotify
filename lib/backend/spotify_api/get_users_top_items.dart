@@ -6,6 +6,8 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 /// user depending on the [type] parameter of the authorized user.
 ///
 /// You must provide an [accessToken]
+///
+/// [Spotify API Docs](https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks)
 Future<dynamic> getUserTopItems(
     {required AccessToken accessToken,
     required Type type,

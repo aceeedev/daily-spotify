@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/providers/track_view_provider.dart';
 import 'package:daily_spotify/pages/calendar_page.dart';
 import 'package:daily_spotify/pages/settings_page.dart';
 import 'package:daily_spotify/styles.dart';
@@ -53,10 +55,8 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               IconButton(
-                                onPressed: () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const CalendarPage())),
+                                onPressed: () => pushToNewPage(
+                                    context, const CalendarPage()),
                                 icon: Icon(
                                   Icons.calendar_month,
                                   color: Styles().mainColor,
@@ -65,10 +65,8 @@ class _HomePageState extends State<HomePage> {
                               ),
                               const BrandText(),
                               IconButton(
-                                onPressed: () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const SettingsPage())),
+                                onPressed: () => pushToNewPage(
+                                    context, const SettingsPage()),
                                 icon: Icon(
                                   Icons.settings,
                                   color: Styles().mainColor,
@@ -106,11 +104,17 @@ class _HomePageState extends State<HomePage> {
     if (!mounted) return null;
     DailyTrack? newDailyTrack;
     while (newDailyTrack == null) {
-      newDailyTrack = await getNewDailyTrack(context, now);
+      newDailyTrack = await getNewDailyTrack(context, now, 0);
     }
     Color averageColor =
         await getAverageColor(newDailyTrack.track.images.last.url);
 
     return {'dailyTrack': newDailyTrack, 'averageColorOfImage': averageColor};
+  }
+
+  void pushToNewPage(BuildContext context, Widget page) {
+    context.read<TrackViewProvider>().setEmojiReactionClicked(false);
+
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => page));
   }
 }

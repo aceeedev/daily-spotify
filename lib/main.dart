@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
+import 'package:daily_spotify/providers/track_view_provider.dart';
 import 'package:daily_spotify/app.dart';
 import 'package:daily_spotify/backend/spotify_api/models/access_token.dart';
 import 'package:daily_spotify/backend/spotify_api/models/artist.dart';
@@ -24,7 +25,10 @@ void main() async {
   Hive.registerAdapter(DailyTrackAdapter());
 
   runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => SetupForm())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => SetupForm()),
+        ChangeNotifierProvider(create: (_) => TrackViewProvider())
+      ],
       child: const MaterialApp(
         home: MyApp(),
         debugShowCheckedModeBanner: false,

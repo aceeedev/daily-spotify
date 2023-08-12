@@ -19,17 +19,23 @@ class DailyTrackAdapter extends TypeAdapter<DailyTrack> {
     return DailyTrack(
       date: fields[0] as DateTime,
       track: fields[1] as Track,
+      reaction: fields[2] as String?,
+      timesReshuffled: fields[3] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, DailyTrack obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.date)
       ..writeByte(1)
-      ..write(obj.track);
+      ..write(obj.track)
+      ..writeByte(2)
+      ..write(obj.reaction)
+      ..writeByte(3)
+      ..write(obj.timesReshuffled);
   }
 
   @override

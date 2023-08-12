@@ -78,6 +78,7 @@ class Styles {
   static final _selectedColor = _secondaryColor[900];
   static const _selectedElevation = 0.1;
   static final _shadowColor = _secondaryColor[200];
+  static const _borderSide = BorderSide(color: _primarySwatch, width: 1);
 
   static final ButtonStyle _unselectedElevatedButtonStyle =
       ElevatedButton.styleFrom(
@@ -89,7 +90,8 @@ class Styles {
       ElevatedButton.styleFrom(
           backgroundColor: _selectedColor,
           elevation: _selectedElevation,
-          shadowColor: _shadowColor);
+          shadowColor: _shadowColor,
+          shape: const StadiumBorder(side: _borderSide));
 
   double get unselectedElevation => _unselectedElevation;
   Color? get selectedColor => _selectedColor;
@@ -98,6 +100,7 @@ class Styles {
   ButtonStyle get unselectedElevatedButtonStyle =>
       _unselectedElevatedButtonStyle;
   ButtonStyle get selectedElevatedButtonStyle => _selectedElevatedButtonStyle;
+  BorderSide get borderSide => _borderSide;
 
   // helper functions:
   static MaterialColor _createMaterialColor(Color? color) {

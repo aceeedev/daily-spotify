@@ -7,6 +7,7 @@ import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/default_config.dart';
+import 'package:daily_spotify/utils/combine_top_items.dart';
 import 'package:daily_spotify/styles.dart';
 
 class TrackSelector extends StatefulWidget {
@@ -48,7 +49,8 @@ class _TrackSelectorState extends State<TrackSelector> {
                 }
               }
 
-              return const LoadingIndicator(text: 'Finding your top songs...');
+              return const Expanded(
+                  child: LoadingIndicator(text: 'Finding your top songs...'));
             }),
       ],
     );
@@ -56,14 +58,11 @@ class _TrackSelectorState extends State<TrackSelector> {
 
   Future<List<Track>?> getItemList() async {
     AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
-    List<Track> trackList =
-        await getUserTopItems(accessToken: accessToken, type: Track);
 
-    if (trackList.isEmpty) {
-      trackList = await getUserTopItems(
-          accessToken: accessToken, type: Track, timeRange: 'short_term');
-    }
-    // get tracks from top global 50 songs on Spotify
+    List<Track> trackList =
+        (await combineTopItems(accessToken, Track)).cast<Track>().toList();
+
+    // get tracks from top global 50 songs on Spotify if needed
     if (trackList.isEmpty) {
       trackList = await getDefaultTracks(accessToken);
     }
@@ -91,21 +90,7 @@ class _TrackSelectorState extends State<TrackSelector> {
       context.read<SetupForm>().addAllToTotalTrackList(trackList);
     }
 
-    if (!mounted) return null;
-    bool initialSelectedTracksExist =
-        context.read<SetupForm>().selectedTrackList.isNotEmpty;
     List<Track> totalTrackList = context.read<SetupForm>().totalTrackList;
-
-    if (!initialSelectedTracksExist) {
-      for (int i = 0;
-          i < (totalTrackList.length < 3 ? totalTrackList.length : 3);
-          i++) {
-        Track track = totalTrackList[i];
-
-        // add remaining tracks if needed to get 3 selected tracks
-        context.read<SetupForm>().addToSelectedTrackList(track);
-      }
-    }
 
     return totalTrackList;
   }

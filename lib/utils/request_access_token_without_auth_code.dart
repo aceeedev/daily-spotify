@@ -4,12 +4,14 @@ import 'package:daily_spotify/widgets/custom_scaffold.dart';
 import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/spotify_login.dart';
 
+/// A more advanced version of [requestAccessToken] where the user is locked out
+/// on a login screen until they accept [requestUserAuth].
 Future<AccessToken> requestAccessTokenWithoutAuthCode(
     BuildContext context) async {
   AccessToken? accessToken = await requestAccessToken(null);
 
   // request user auth if expired
-  if (accessToken == null) {
+  if (accessToken == null || accessToken.expiresAt.isBefore(DateTime.now())) {
     String? authCode = await requestUserAuth();
 
     await Navigator.of(context).pushReplacement(MaterialPageRoute(

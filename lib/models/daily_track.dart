@@ -9,6 +9,14 @@ class DailyTrack {
   DateTime date;
   @HiveField(1)
   Track track;
+  @HiveField(2)
+  String? reaction;
+  @HiveField(3)
+  int timesReshuffled;
 
-  DailyTrack({required this.date, required this.track});
+  DailyTrack(
+      {required this.date,
+      required this.track,
+      this.reaction,
+      this.timesReshuffled = 0});
 }
