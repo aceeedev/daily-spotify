@@ -4,7 +4,7 @@ import './spotify_image.dart';
 part 'artist.g.dart';
 
 @HiveType(typeId: 2)
-class Artist {
+class Artist extends HiveObject {
   @HiveField(0)
   String id;
   @HiveField(1)

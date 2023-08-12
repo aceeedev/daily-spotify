@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 part 'access_token.g.dart';
 
 @HiveType(typeId: 1)
-class AccessToken {
+class AccessToken extends HiveObject {
   @HiveField(0)
   String accessToken;
   @HiveField(1)

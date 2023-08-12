@@ -317,7 +317,10 @@ class _IconButtonRow extends StatelessWidget {
       if (value) {
         await db.Tracks.instance.deleteDailyTrack(dailyTrack.date);
         await getNewDailyTrack(
-            context, dailyTrack.date, dailyTrack.timesReshuffled + 1);
+            context: context,
+            today: dailyTrack.date,
+            numberOfReshuffles: dailyTrack.timesReshuffled + 1,
+            excludeTracks: [dailyTrack.track]);
 
         context.read<TrackViewProvider>().setEmojiReactionClicked(false);
 

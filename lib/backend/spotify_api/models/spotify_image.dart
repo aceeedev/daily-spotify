@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 part 'spotify_image.g.dart';
 
 @HiveType(typeId: 3)
-class SpotifyImage {
+class SpotifyImage extends HiveObject {
   @HiveField(0)
   int height;
   @HiveField(1)

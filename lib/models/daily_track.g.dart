@@ -20,8 +20,7 @@ class DailyTrackAdapter extends TypeAdapter<DailyTrack> {
       date: fields[0] as DateTime,
       track: fields[1] as Track,
       reaction: fields[2] as String?,
-      timesReshuffled: fields[3] as int,
-    );
+    ).._timesReshuffled = fields[3] as int?;
   }
 
   @override
@@ -35,7 +34,7 @@ class DailyTrackAdapter extends TypeAdapter<DailyTrack> {
       ..writeByte(2)
       ..write(obj.reaction)
       ..writeByte(3)
-      ..write(obj.timesReshuffled);
+      ..write(obj._timesReshuffled);
   }
 
   @override
