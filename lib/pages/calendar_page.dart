@@ -176,7 +176,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Future<int> streakFuture() async {
     if (context.read<CalendarPageProvider>().streak == 0) {
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 2));
     }
 
     if (!mounted) return 0;
@@ -206,7 +206,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
   @override
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
-    
+
     int year = widget.monthlyDateTime.year;
     int month = widget.monthlyDateTime.month;
 
@@ -220,6 +220,10 @@ class _MonthCalendarState extends State<MonthCalendar> {
       gridDelegate:
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
       itemBuilder: (context, index) {
+        int dateDay = index - monthOffset + 1;
+        DateTime date = DateTime(year, month, dateDay, now.hour, now.minute,
+            now.second, now.millisecond, now.microsecond);
+
         // account for the month's date offset, add empty entries
         if (index < monthOffset) {
           return const SizedBox.shrink();
@@ -230,7 +234,9 @@ class _MonthCalendarState extends State<MonthCalendar> {
           if (dailyTrack.date.day == (index - monthOffset) + 1) {
             dailyTrackIndex++;
 
-            context.read<CalendarPageProvider>().addToStreak();
+            if (now.compareTo(date) >= 0) {
+              context.read<CalendarPageProvider>().addToStreak();
+            }
 
             return GestureDetector(
                 onTap: () async {
@@ -281,9 +287,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
           }
         }
 
-        int dateDay = index - monthOffset + 1;
-        DateTime dateWithoutTrack = DateTime(year, month, dateDay, now.hour, now.minute, now.second, now.millisecond, now.microsecond);
-        if (now.compareTo(dateWithoutTrack) >= 0) {
+        if (now.compareTo(date) >= 0) {
           context.read<CalendarPageProvider>().setStreak(0);
         }
 
