@@ -145,7 +145,7 @@ class TrackView extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                    bottom: 75.0, left: 72.0, right: 72.0),
+                    top: 16.0, bottom: 75.0, left: 72.0, right: 72.0),
                 child: _IconButtonRow(
                   dailyTrack: dailyTrack,
                   track: track,
@@ -316,14 +316,17 @@ class _IconButtonRow extends StatelessWidget {
 
       if (value) {
         await db.Tracks.instance.deleteDailyTrack(dailyTrack.date);
+
+        context
+            .read<TrackViewProvider>()
+            .addToExcludeTrackList(dailyTrack.track);
         await getNewDailyTrack(
             context: context,
             today: dailyTrack.date,
             numberOfReshuffles: dailyTrack.timesReshuffled + 1,
-            excludeTracks: [dailyTrack.track]);
+            excludeTracks: context.read<TrackViewProvider>().excludeTrackList);
 
         context.read<TrackViewProvider>().setEmojiReactionClicked(false);
-
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const HomePage()));
       }

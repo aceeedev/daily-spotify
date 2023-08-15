@@ -132,6 +132,11 @@ class NotificationManager {
     await db.Config.instance.saveLastTimeNotificationsScheduled(now);
   }
 
+  static Future cancelAllNotifications() async {
+    db.Config.instance.saveLastTimeNotificationsScheduled(null);
+    await _flutterLocalNotificationsPlugin.cancelAll();
+  }
+
   static Future<List<PendingNotificationRequest>>
       getScheduledNotifications() async {
     return await _flutterLocalNotificationsPlugin.pendingNotificationRequests();

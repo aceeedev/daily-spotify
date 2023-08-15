@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/backend/notification_manager.dart';
 import 'package:daily_spotify/providers/setup_provider.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/widgets/custom_scaffold.dart';
@@ -51,104 +52,38 @@ class _SettingsPageState extends State<SettingsPage> {
                         child:
                             Text('An error has occurred, ${snapshot.error}'));
                   } else if (snapshot.hasData) {
-                    List<String> genreStringList = (snapshot.data
-                        as Map<String, dynamic>)['genreList'] as List<String>;
-                    List<SpotifyImage?> artistImageList = ((snapshot.data
-                                as Map<String, dynamic>)['artistList']
-                            as List<Artist>)
-                        .map((e) => e.images != null ? e.images!.last : null)
-                        .toList();
-                    List<SpotifyImage> trackImageList =
-                        ((snapshot.data as Map<String, dynamic>)['trackList']
-                                as List<Track>)
-                            .map((e) => e.images.last)
-                            .toList();
+                    Map<String, dynamic> data =
+                        snapshot.data as Map<String, dynamic>;
+
+                    List<Widget> children = _getChildren(data);
 
                     return Center(
                       child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SettingsListView(
-                              text: 'Your favorite genres',
-                              items: genreStringList,
-                              settingsSelector: const GenreSelector(
-                                inSetup: false,
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: children.length,
+                              itemBuilder: (context, index) => children[index],
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                ' Created by andrew',
+                                style: Styles().subtitleText,
                               ),
-                              onSave: () async {
-                                List<String> genreList =
-                                    context.read<SetupForm>().selectedGenreList;
-
-                                await db.Config.instance
-                                    .saveGenreConfig(genreList);
-
-                                setState(() {});
-                              },
-                            ),
-                            SettingsListView(
-                              text: 'Your favorite artists',
-                              items: artistImageList,
-                              settingsSelector: const ArtistSelector(),
-                              onSave: () async {
-                                List<Artist> artistList = context
-                                    .read<SetupForm>()
-                                    .selectedArtistList;
-
-                                await db.Config.instance
-                                    .saveArtistConfig(artistList);
-
-                                setState(() {});
-                              },
-                            ),
-                            SettingsListView(
-                              text: 'Your favorite tracks',
-                              items: trackImageList,
-                              settingsSelector: const TrackSelector(),
-                              onSave: () async {
-                                List<Track> trackList =
-                                    context.read<SetupForm>().selectedTrackList;
-
-                                await db.Config.instance
-                                    .saveTrackConfig(trackList);
-
-                                setState(() {});
-                              },
-                            ),
-                            SettingsButton(
-                              titleText: 'Disconnect',
-                              descriptionText:
-                                  'Remove this app from your Spotify account.',
-                              buttonText: 'Manage Spotify Apps',
-                              onPressed: () async {
-                                Uri url = Uri.parse(
-                                    'https://www.spotify.com/us/account/apps/');
-
-                                if (!await launchUrl(url)) {
-                                  throw Exception('Could not launch $url');
-                                }
-                              },
-                            ),
-                            kReleaseMode
-                                ? const SizedBox.shrink()
-                                : const DeveloperSettingsWidgets(),
-                            const Spacer(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  ' Created by andrew',
-                                  style: Styles().subtitleText,
+                              Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: Icon(
+                                  Icons.favorite,
+                                  color: Styles().mainColor,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 4.0),
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: Styles().mainColor,
-                                  ),
-                                ),
-                              ],
-                            )
-                          ]),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     );
                   }
                 }
@@ -160,17 +95,101 @@ class _SettingsPageState extends State<SettingsPage> {
 
   /// Returns a [Future<Map<String, dynamic>>] which contains the current
   /// settings as the values, ['genreList'] as [List<String>], ['artistList'] as
-  /// [List<Artist>], and ['trackList'] as [List<Track>].
+  /// [List<Artist>], ['trackList'] as [List<Track>], and
+  /// ['notificationsEnabled'] as [bool].
   Future<Map<String, dynamic>> getSettings() async {
     List<String> genreList = await db.Config.instance.getGenreConfig();
     List<Artist> artistList = await db.Config.instance.getArtistConfig();
     List<Track> trackList = await db.Config.instance.getTrackConfig();
+    bool notificationsEnabled =
+        await db.Config.instance.getNotificationsEnabled();
 
     return {
       'genreList': genreList,
       'artistList': artistList,
       'trackList': trackList,
+      'notificationsEnabled': notificationsEnabled,
     };
+  }
+
+  List<Widget> _getChildren(Map<String, dynamic> data) {
+    List<String> genreStringList = data['genreList'] as List<String>;
+    List<SpotifyImage?> artistImageList = (data['artistList'] as List<Artist>)
+        .map((e) => e.images != null ? e.images!.last : null)
+        .toList();
+    List<SpotifyImage> trackImageList =
+        (data['trackList'] as List<Track>).map((e) => e.images.last).toList();
+
+    bool notificationsEnabled = data['notificationsEnabled'] as bool;
+
+    return [
+      SettingsListView(
+        text: 'Your favorite genres',
+        items: genreStringList,
+        settingsSelector: const GenreSelector(
+          inSetup: false,
+        ),
+        onSave: () async {
+          List<String> genreList = context.read<SetupForm>().selectedGenreList;
+
+          await db.Config.instance.saveGenreConfig(genreList);
+
+          setState(() {});
+        },
+      ),
+      SettingsListView(
+        text: 'Your favorite artists',
+        items: artistImageList,
+        settingsSelector: const ArtistSelector(),
+        onSave: () async {
+          List<Artist> artistList =
+              context.read<SetupForm>().selectedArtistList;
+
+          await db.Config.instance.saveArtistConfig(artistList);
+
+          setState(() {});
+        },
+      ),
+      SettingsListView(
+        text: 'Your favorite tracks',
+        items: trackImageList,
+        settingsSelector: const TrackSelector(),
+        onSave: () async {
+          List<Track> trackList = context.read<SetupForm>().selectedTrackList;
+
+          await db.Config.instance.saveTrackConfig(trackList);
+
+          setState(() {});
+        },
+      ),
+      SettingsButton(
+        titleText: 'Disconnect',
+        descriptionText: 'Remove this app from your Spotify account.',
+        buttonText: 'Manage Spotify Apps',
+        onPressed: () async {
+          Uri url = Uri.parse('https://www.spotify.com/us/account/apps/');
+
+          if (!await launchUrl(url)) {
+            throw Exception('Could not launch $url');
+          }
+        },
+      ),
+      SettingsSwitch(
+        titleText: 'Enable notifications',
+        descriptionText: 'Turn off and on push notifications for Your Pitch.',
+        value: notificationsEnabled,
+        onChanged: (bool value) async {
+          await db.Config.instance.saveNotificationsEnabled(value);
+
+          if (value) {
+            NotificationManager.scheduleNotifications();
+          } else {
+            NotificationManager.cancelAllNotifications();
+          }
+        },
+      ),
+      kReleaseMode ? const SizedBox.shrink() : const DeveloperSettingsWidgets(),
+    ];
   }
 }
 
@@ -377,6 +396,81 @@ class SettingsButton extends StatelessWidget {
                       buttonText,
                       style: Styles().subtitleTextWithPrimaryColor,
                     )),
+              ),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// A widget for displaying a switch button for settings.
+/// Requires [titleText], a [String] of the title of the setting,
+/// [descriptionText], a [String] that is the description of the setting,
+/// [value] a [bool] of the state of the switch, and
+/// [onChanged] a method that takes in a boolean and is called when the switch
+/// has been pressed.
+class SettingsSwitch extends StatefulWidget {
+  const SettingsSwitch(
+      {super.key,
+      required this.titleText,
+      required this.descriptionText,
+      required this.value,
+      required this.onChanged});
+  final String titleText;
+  final String descriptionText;
+  final bool value;
+  final Function(bool) onChanged;
+
+  @override
+  State<SettingsSwitch> createState() => _SettingsSwitchState();
+}
+
+class _SettingsSwitchState extends State<SettingsSwitch> {
+  late bool valueOfSwitch;
+
+  @override
+  void initState() {
+    valueOfSwitch = widget.value;
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.titleText,
+          style: Styles().largeText,
+        ),
+        Row(
+          children: [
+            Flexible(
+              child: Text(
+                widget.descriptionText,
+                style: Styles().defaultText,
+              ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Switch(
+                  value: valueOfSwitch,
+                  onChanged: (bool newValue) {
+                    widget.onChanged(newValue);
+
+                    setState(() => valueOfSwitch = newValue);
+                  },
+                  inactiveTrackColor: Styles().secondaryColor,
+                  thumbColor:
+                      MaterialStateProperty.all<Color>(Styles().primarySwatch),
+                  inactiveThumbColor: Styles().primarySwatch,
+                  trackOutlineColor:
+                      MaterialStateProperty.all<Color>(Styles().secondaryColor),
+                ),
               ),
             )
           ],

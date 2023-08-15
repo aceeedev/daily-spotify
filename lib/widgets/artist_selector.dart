@@ -76,8 +76,10 @@ class _ArtistSelectorState extends State<ArtistSelector> {
         }
 
         context.read<SetupForm>().addAllToTotalArtistList(savedArtists);
-        context.read<SetupForm>().addAllToTotalArtistList(artistList);
       }
+
+      if (!mounted) return null;
+      context.read<SetupForm>().addAllToTotalArtistList(artistList);
     }
 
     if (!mounted) return null;

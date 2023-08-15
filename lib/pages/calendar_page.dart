@@ -9,6 +9,7 @@ import 'package:daily_spotify/widgets/track_view_widget.dart';
 import 'package:daily_spotify/widgets/brand_text_widget.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/providers/track_view_provider.dart';
+import 'package:daily_spotify/providers/calendar_page_provider.dart';
 import 'package:daily_spotify/utils/get_average_color.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -22,129 +23,176 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Calendar',
-          style: Styles().largeText,
-        ),
-        backgroundColor: Styles().backgroundColor,
-        leading: BackButton(color: Styles().mainColor),
-      ),
-      body: Frame(
-        showLogo: false,
-        showMetadataAttribute: true,
-        child: FutureBuilder(
-          future: db.Tracks.instance.getAllDailyTracks(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                return Center(
-                    child: Text('An error has occurred, ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                List<DailyTrack> allDailyTracksList =
-                    snapshot.data as List<DailyTrack>;
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            'Calendar',
+            style: Styles().largeText,
+          ),
+          backgroundColor: Styles().backgroundColor,
+          leading: BackButton(color: Styles().mainColor),
+          actions: [
+            FutureBuilder(
+                future: streakFuture(),
+                builder: (context, snapshot) {
+                  EdgeInsets padding = const EdgeInsets.only(right: 12.0);
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      // TODO: fix the streaks to be cleaner and not just wait a
+                      int streak = snapshot.data as int;
 
-                // find the months between the first daily track and now
-                DateTime firstDailyTrackDateTime =
-                    allDailyTracksList.first.date;
-
-                DateTime mostRecentDailyTrackDate = DateTime.now();
-                for (DailyTrack dailyTrack in allDailyTracksList) {
-                  if (dailyTrack.date.compareTo(mostRecentDailyTrackDate) > 0) {
-                    mostRecentDailyTrackDate = dailyTrack.date;
+                      return Row(
+                        children: [
+                          Icon(Icons.local_fire_department_rounded,
+                              color: Styles().mainColor, size: 32.0),
+                          Padding(
+                            padding: padding,
+                            child: Text(
+                              '$streak',
+                              style: Styles().largeText,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
                   }
-                }
 
-                List<DateTime> monthsBetweenFirstDailyTrackAndNow = [];
-                while (firstDailyTrackDateTime
-                    .isBefore(mostRecentDailyTrackDate)) {
-                  monthsBetweenFirstDailyTrackAndNow
-                      .add(firstDailyTrackDateTime);
+                  return Padding(
+                    padding: padding,
+                    child: const CircularProgressIndicator(),
+                  );
+                }),
+          ],
+        ),
+        body: Frame(
+            showLogo: false,
+            showMetadataAttribute: true,
+            child: FutureBuilder(
+              future: db.Tracks.instance.getAllDailyTracks(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return Center(
+                        child:
+                            Text('An error has occurred, ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    List<DailyTrack> allDailyTracksList =
+                        snapshot.data as List<DailyTrack>;
 
-                  firstDailyTrackDateTime = DateTime(
-                      firstDailyTrackDateTime.year,
-                      firstDailyTrackDateTime.month + 1);
-                }
+                    // find the months between the first daily track and now
+                    DateTime firstDailyTrackDateTime =
+                        allDailyTracksList.first.date;
 
-                // go through and sort the daily tracks by month and year
-                List<List<DailyTrack>> dailyTracksByMonth = [];
-                for (DateTime month in monthsBetweenFirstDailyTrackAndNow) {
-                  dailyTracksByMonth.add([]);
-                }
-
-                int i = 0;
-                for (DailyTrack dailyTrack in allDailyTracksList) {
-                  if (dailyTrack.date.month ==
-                          monthsBetweenFirstDailyTrackAndNow[i].month &&
-                      dailyTrack.date.year ==
-                          monthsBetweenFirstDailyTrackAndNow[i].year) {
-                    dailyTracksByMonth[i].add(dailyTrack);
-                  } else {
-                    while (dailyTrack.date.month !=
-                            monthsBetweenFirstDailyTrackAndNow[i].month ||
-                        dailyTrack.date.year !=
-                            monthsBetweenFirstDailyTrackAndNow[i].year) {
-                      i++;
+                    /// aka now
+                    DateTime mostRecentDailyTrackDate = DateTime.now();
+                    for (DailyTrack dailyTrack in allDailyTracksList) {
+                      if (dailyTrack.date.compareTo(mostRecentDailyTrackDate) >
+                          0) {
+                        mostRecentDailyTrackDate = dailyTrack.date;
+                      }
                     }
 
-                    dailyTracksByMonth[i].add(dailyTrack);
+                    List<DateTime> monthsBetweenFirstDailyTrackAndNow = [];
+                    while (firstDailyTrackDateTime
+                        .isBefore(mostRecentDailyTrackDate)) {
+                      monthsBetweenFirstDailyTrackAndNow
+                          .add(firstDailyTrackDateTime);
+
+                      firstDailyTrackDateTime = DateTime(
+                          firstDailyTrackDateTime.year,
+                          firstDailyTrackDateTime.month + 1);
+                    }
+
+                    // go through and sort the daily tracks by month and year
+                    List<List<DailyTrack>> dailyTracksByMonth = [];
+                    for (DateTime month in monthsBetweenFirstDailyTrackAndNow) {
+                      dailyTracksByMonth.add([]);
+                    }
+
+                    int i = 0;
+                    for (DailyTrack dailyTrack in allDailyTracksList) {
+                      if (dailyTrack.date.month ==
+                              monthsBetweenFirstDailyTrackAndNow[i].month &&
+                          dailyTrack.date.year ==
+                              monthsBetweenFirstDailyTrackAndNow[i].year) {
+                        dailyTracksByMonth[i].add(dailyTrack);
+                      } else {
+                        while (dailyTrack.date.month !=
+                                monthsBetweenFirstDailyTrackAndNow[i].month ||
+                            dailyTrack.date.year !=
+                                monthsBetweenFirstDailyTrackAndNow[i].year) {
+                          i++;
+                        }
+
+                        dailyTracksByMonth[i].add(dailyTrack);
+                      }
+                    }
+
+                    // flip daily tracks and months since ListView starts at bottom
+                    //   and is reversed
+                    if (monthsBetweenFirstDailyTrackAndNow.length > 2) {
+                      dailyTracksByMonth = dailyTracksByMonth.reversed.toList();
+                      monthsBetweenFirstDailyTrackAndNow =
+                          monthsBetweenFirstDailyTrackAndNow.reversed.toList();
+                    }
+
+                    return ListView.builder(
+                        reverse: monthsBetweenFirstDailyTrackAndNow.length > 2,
+                        itemCount: monthsBetweenFirstDailyTrackAndNow.length,
+                        itemBuilder: (context, index) => Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: index !=
+                                              monthsBetweenFirstDailyTrackAndNow
+                                                      .length -
+                                                  1
+                                          ? 16.0
+                                          : 0.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        DateFormat('MMM y').format(
+                                            monthsBetweenFirstDailyTrackAndNow[
+                                                index]),
+                                        style: Styles().largeText,
+                                      )),
+                                ),
+                                MonthCalendar(
+                                  monthlyDateTime:
+                                      monthsBetweenFirstDailyTrackAndNow[index],
+                                  dailyTracksThisMonth:
+                                      dailyTracksByMonth[index],
+                                ),
+                              ],
+                            ));
                   }
                 }
 
-                // flip daily tracks and months since ListView starts at bottom
-                //   and is reversed
-                if (monthsBetweenFirstDailyTrackAndNow.length > 2) {
-                  dailyTracksByMonth = dailyTracksByMonth.reversed.toList();
-                  monthsBetweenFirstDailyTrackAndNow =
-                      monthsBetweenFirstDailyTrackAndNow.reversed.toList();
-                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            )));
+  }
 
-                return ListView.builder(
-                    reverse: monthsBetweenFirstDailyTrackAndNow.length > 2,
-                    itemCount: monthsBetweenFirstDailyTrackAndNow.length,
-                    itemBuilder: (context, index) => Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: index !=
-                                          monthsBetweenFirstDailyTrackAndNow
-                                                  .length -
-                                              1
-                                      ? 16.0
-                                      : 0.0),
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    DateFormat('MMM y').format(
-                                        monthsBetweenFirstDailyTrackAndNow[
-                                            index]),
-                                    style: Styles().largeText,
-                                  )),
-                            ),
-                            MonthCalendar(
-                              monthlyDateTime:
-                                  monthsBetweenFirstDailyTrackAndNow[index],
-                              dailyTracksThisMonth: dailyTracksByMonth[index],
-                            ),
-                          ],
-                        ));
-              }
-            }
+  Future<int> streakFuture() async {
+    if (context.read<CalendarPageProvider>().streak == 0) {
+      await Future.delayed(const Duration(seconds: 1));
+    }
 
-            return const CircularProgressIndicator();
-          },
-        ),
-      ),
-    );
+    if (!mounted) return 0;
+    return context.read<CalendarPageProvider>().streak;
   }
 }
 
+// WidgetsBinding.instance.addPostFrameCallback((_) =>
+//        setState(() => streak = context.read<CalendarPageProvider>().streak))
+
 class MonthCalendar extends StatefulWidget {
-  const MonthCalendar(
-      {super.key,
-      required this.monthlyDateTime,
-      required this.dailyTracksThisMonth});
+  const MonthCalendar({
+    super.key,
+    required this.monthlyDateTime,
+    required this.dailyTracksThisMonth,
+  });
   final DateTime monthlyDateTime;
   final List<DailyTrack> dailyTracksThisMonth;
 
@@ -179,6 +227,9 @@ class _MonthCalendarState extends State<MonthCalendar> {
           DailyTrack? dailyTrack = widget.dailyTracksThisMonth[dailyTrackIndex];
           if (dailyTrack.date.day == (index - monthOffset) + 1) {
             dailyTrackIndex++;
+
+            context.read<CalendarPageProvider>().addToStreak();
+
             return GestureDetector(
                 onTap: () async {
                   Color averageColor =
@@ -227,8 +278,13 @@ class _MonthCalendarState extends State<MonthCalendar> {
                 }));
           }
         }
+
+        int dateDay = index - monthOffset + 1;
+
+        context.read<CalendarPageProvider>().setStreak(0);
+
         return CalendarText(
-          index: index - monthOffset,
+          index: dateDay,
           containsImage: false,
         );
       },
@@ -245,7 +301,7 @@ class CalendarText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Text('${index + 1}',
+        child: Text('$index',
             style: containsImage
                 ? Styles().calendarTextIfImage
                 : Styles().calendarText));

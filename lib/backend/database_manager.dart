@@ -77,7 +77,7 @@ class Config {
   Future<void> saveNotificationsEnabled(bool value) async =>
       (await box).put('notificationsEnabled', value);
 
-  Future<void> saveLastTimeNotificationsScheduled(DateTime time) async =>
+  Future<void> saveLastTimeNotificationsScheduled(DateTime? time) async =>
       (await box).put('lastTimeNotificationsScheduled', time);
 
   Future<List<String>> getGenreConfig() async {
