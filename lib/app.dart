@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/backend/notification_manager.dart';
 import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/pages/setup_page.dart';
@@ -28,8 +29,18 @@ class MyApp extends StatelessWidget {
                 }
               }
 
+              NotificationManager.init(initScheduled: true);
+
               return const Center(child: LoadingIndicator());
             }),
-            future: db.Tracks.instance.getAllDailyTracks()));
+            future: _future()));
+  }
+
+  Future<List<DailyTrack>> _future() async {
+    NotificationManager.init(initScheduled: true);
+    await NotificationManager.requestPermissions();
+    await NotificationManager.scheduleNotifications();
+
+    return await db.Tracks.instance.getAllDailyTracks();
   }
 }

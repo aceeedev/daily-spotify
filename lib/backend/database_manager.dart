@@ -74,6 +74,12 @@ class Config {
   Future<void> saveTrackConfig(List<Track> trackList) async =>
       (await box).put('track', trackList);
 
+  Future<void> saveNotificationsEnabled(bool value) async =>
+      (await box).put('notificationsEnabled', value);
+
+  Future<void> saveLastTimeNotificationsScheduled(DateTime time) async =>
+      (await box).put('lastTimeNotificationsScheduled', time);
+
   Future<List<String>> getGenreConfig() async {
     List<String>? genreList = (await box).get('genre');
 
@@ -93,6 +99,12 @@ class Config {
 
     return trackList ?? [];
   }
+
+  Future<bool> getNotificationsEnabled() async =>
+      ((await box).get('notificationsEnabled') as bool?) ?? true;
+
+  Future<DateTime?> getLastTimeNotificationsScheduled() async =>
+      (await box).get('lastTimeNotificationsScheduled');
 }
 
 class Tracks {

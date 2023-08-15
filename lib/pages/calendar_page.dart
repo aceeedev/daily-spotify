@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/widgets/custom_scaffold.dart';
@@ -7,6 +8,7 @@ import 'package:daily_spotify/widgets/frame_widget.dart';
 import 'package:daily_spotify/widgets/track_view_widget.dart';
 import 'package:daily_spotify/widgets/brand_text_widget.dart';
 import 'package:daily_spotify/styles.dart';
+import 'package:daily_spotify/providers/track_view_provider.dart';
 import 'package:daily_spotify/utils/get_average_color.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -183,6 +185,9 @@ class _MonthCalendarState extends State<MonthCalendar> {
                       await getAverageColor(dailyTrack.track.images.last.url);
 
                   if (!mounted) return;
+                  context
+                      .read<TrackViewProvider>()
+                      .setEmojiReactionClicked(false);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => CustomScaffold(
                             body: Frame(

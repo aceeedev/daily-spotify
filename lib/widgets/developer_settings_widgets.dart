@@ -1,9 +1,11 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
+import 'package:daily_spotify/backend/notification_manager.dart';
 import 'package:daily_spotify/models/daily_track.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/get_recommendation_seeds.dart';
@@ -36,6 +38,9 @@ class DeveloperSettingsWidgets extends StatelessWidget {
         TextButton(
             onPressed: () async => deleteTodaysDailyTrack(),
             child: const Text('Delete today\'s daily track')),
+        TextButton(
+            onPressed: () async => getNotifications(),
+            child: const Text('Get pending notifications')),
       ],
     );
   }
@@ -116,5 +121,19 @@ class DeveloperSettingsWidgets extends StatelessWidget {
 
   void deleteTodaysDailyTrack() async {
     await db.Tracks.instance.deleteDailyTrack(DateTime.now());
+  }
+
+  void getNotifications() async {
+    List<PendingNotificationRequest> pendingNotifications =
+        await NotificationManager.getScheduledNotifications();
+    print('There are ${pendingNotifications.length} pending notifications:');
+
+    for (PendingNotificationRequest pendingNotification
+        in pendingNotifications) {
+      print('id: ${pendingNotification.id}');
+      print('title: ${pendingNotification.title}');
+      print('body: ${pendingNotification.body}');
+      print('payload: ${pendingNotification.payload}\n');
+    }
   }
 }
