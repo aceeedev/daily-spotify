@@ -205,6 +205,8 @@ class _MonthCalendarState extends State<MonthCalendar> {
 
   @override
   Widget build(BuildContext context) {
+    final DateTime now = DateTime.now();
+    
     int year = widget.monthlyDateTime.year;
     int month = widget.monthlyDateTime.month;
 
@@ -280,8 +282,10 @@ class _MonthCalendarState extends State<MonthCalendar> {
         }
 
         int dateDay = index - monthOffset + 1;
-
-        context.read<CalendarPageProvider>().setStreak(0);
+        DateTime dateWithoutTrack = DateTime(year, month, dateDay, now.hour, now.minute, now.second, now.millisecond, now.microsecond);
+        if (now.compareTo(dateWithoutTrack) >= 0) {
+          context.read<CalendarPageProvider>().setStreak(0);
+        }
 
         return CalendarText(
           index: dateDay,
