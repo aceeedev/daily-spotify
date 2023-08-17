@@ -38,7 +38,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   EdgeInsets padding = const EdgeInsets.only(right: 12.0);
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
-                      // TODO: fix the streaks to be cleaner and not just wait a
                       int streak = snapshot.data as int;
 
                       return Row(
@@ -78,6 +77,24 @@ class _CalendarPageState extends State<CalendarPage> {
                   } else if (snapshot.hasData) {
                     List<DailyTrack> allDailyTracksList =
                         snapshot.data as List<DailyTrack>;
+
+                    // calculate streaks
+                    for (int i = 1; i < allDailyTracksList.length; i++) {
+                      DateTime dailyTrackDate = allDailyTracksList[i].date;
+                      DateTime previousDailyTrackDate =
+                          allDailyTracksList[i - 1].date;
+
+                      if ((dailyTrackDate.difference(previousDailyTrackDate))
+                              .inHours <
+                          47) {
+                        context.read<CalendarPageProvider>().addToStreak();
+                      } else {
+                        context.read<CalendarPageProvider>().setStreak(0);
+                      }
+                    }
+                    // account for the current daily track, streak is always at least 1
+                    context.read<CalendarPageProvider>().addToStreak();
+                    context.read<CalendarPageProvider>().setStreaksReady(true);
 
                     // find the months between the first daily track and now
                     DateTime firstDailyTrackDateTime =
@@ -175,17 +192,17 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   Future<int> streakFuture() async {
-    if (context.read<CalendarPageProvider>().streak == 0) {
-      await Future.delayed(const Duration(seconds: 2));
+    // wait for streaks to be calculated
+    while (!context.read<CalendarPageProvider>().streaksReady) {
+      await Future.delayed(const Duration(milliseconds: 500));
     }
 
     if (!mounted) return 0;
+    context.read<CalendarPageProvider>().setStreaksReady(false);
+
     return context.read<CalendarPageProvider>().streak;
   }
 }
-
-// WidgetsBinding.instance.addPostFrameCallback((_) =>
-//        setState(() => streak = context.read<CalendarPageProvider>().streak))
 
 class MonthCalendar extends StatefulWidget {
   const MonthCalendar({
@@ -205,8 +222,6 @@ class _MonthCalendarState extends State<MonthCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime now = DateTime.now();
-
     int year = widget.monthlyDateTime.year;
     int month = widget.monthlyDateTime.month;
 
@@ -221,8 +236,6 @@ class _MonthCalendarState extends State<MonthCalendar> {
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
       itemBuilder: (context, index) {
         int dateDay = index - monthOffset + 1;
-        DateTime date = DateTime(year, month, dateDay, now.hour, now.minute,
-            now.second, now.millisecond, now.microsecond);
 
         // account for the month's date offset, add empty entries
         if (index < monthOffset) {
@@ -233,10 +246,6 @@ class _MonthCalendarState extends State<MonthCalendar> {
           DailyTrack? dailyTrack = widget.dailyTracksThisMonth[dailyTrackIndex];
           if (dailyTrack.date.day == (index - monthOffset) + 1) {
             dailyTrackIndex++;
-
-            if (now.compareTo(date) >= 0) {
-              context.read<CalendarPageProvider>().addToStreak();
-            }
 
             return GestureDetector(
                 onTap: () async {
@@ -285,10 +294,6 @@ class _MonthCalendarState extends State<MonthCalendar> {
                   return Container(color: Styles().secondaryColor);
                 }));
           }
-        }
-
-        if (now.compareTo(date) >= 0) {
-          context.read<CalendarPageProvider>().setStreak(0);
         }
 
         return CalendarText(
