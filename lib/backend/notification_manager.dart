@@ -87,7 +87,15 @@ class NotificationManager {
         await db.Config.instance.getLastTimeNotificationsScheduled();
     bool timeToScheduleNotifications = lastTimeNotificationsScheduled == null
         ? true
-        : now.difference(lastTimeNotificationsScheduled).inDays >= 1;
+        : (DateTime(now.year, now.month, now.day)
+                        .difference(DateTime(
+                            lastTimeNotificationsScheduled.year,
+                            lastTimeNotificationsScheduled.month,
+                            lastTimeNotificationsScheduled.day))
+                        .inHours /
+                    24)
+                .round() >=
+            1;
     if (!notificationsEnabled || !timeToScheduleNotifications) return;
 
     await _flutterLocalNotificationsPlugin.cancelAll();

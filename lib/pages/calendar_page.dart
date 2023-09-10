@@ -11,6 +11,7 @@ import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/providers/track_view_provider.dart';
 import 'package:daily_spotify/providers/calendar_page_provider.dart';
 import 'package:daily_spotify/utils/get_average_color.dart';
+import 'package:daily_spotify/utils/dates_are_sequential.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -78,23 +79,27 @@ class _CalendarPageState extends State<CalendarPage> {
                     List<DailyTrack> allDailyTracksList =
                         snapshot.data as List<DailyTrack>;
 
-                    // calculate streaks
-                    for (int i = 1; i < allDailyTracksList.length; i++) {
-                      DateTime dailyTrackDate = allDailyTracksList[i].date;
-                      DateTime previousDailyTrackDate =
-                          allDailyTracksList[i - 1].date;
+                    // calculate streaks if needed
+                    if (!context.read<CalendarPageProvider>().streaksReady) {
+                      for (int i = allDailyTracksList.length - 1; i > 0; i--) {
+                        DateTime dailyTrackDate = allDailyTracksList[i].date;
+                        DateTime previousDailyTrackDate =
+                            allDailyTracksList[i - 1].date;
 
-                      if ((dailyTrackDate.difference(previousDailyTrackDate))
-                              .inHours <
-                          47) {
-                        context.read<CalendarPageProvider>().addToStreak();
-                      } else {
-                        context.read<CalendarPageProvider>().setStreak(0);
+                        if (datesAreSequential(
+                            previousDailyTrackDate, dailyTrackDate)) {
+                          context.read<CalendarPageProvider>().addToStreak();
+                        } else {
+                          break;
+                        }
                       }
+
+                      // account for the current daily track, streak is always at least 1
+                      context.read<CalendarPageProvider>().addToStreak();
+                      context
+                          .read<CalendarPageProvider>()
+                          .setStreaksReady(true);
                     }
-                    // account for the current daily track, streak is always at least 1
-                    context.read<CalendarPageProvider>().addToStreak();
-                    context.read<CalendarPageProvider>().setStreaksReady(true);
 
                     // find the months between the first daily track and now
                     DateTime firstDailyTrackDateTime =
@@ -198,7 +203,9 @@ class _CalendarPageState extends State<CalendarPage> {
     }
 
     if (!mounted) return 0;
-    context.read<CalendarPageProvider>().setStreaksReady(false);
+    context
+        .read<CalendarPageProvider>()
+        .setStreaksReady(context.read<CalendarPageProvider>().streak != 0);
 
     return context.read<CalendarPageProvider>().streak;
   }
