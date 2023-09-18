@@ -24,6 +24,9 @@ Future<Map<String, int>> filterByGenre(
   List<String> availableSeedGenres =
       await getAvailableGenreSeeds(accessToken: accessToken);
 
+  if (genresMap.isEmpty) {
+    return {};
+  }
   genresMap =
       genresMap.map((key, value) => MapEntry(key.replaceAll(' ', '-'), value));
   genresMap.removeWhere((key, value) => !availableSeedGenres.contains(key));

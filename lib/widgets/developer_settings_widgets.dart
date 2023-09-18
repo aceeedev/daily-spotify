@@ -76,14 +76,15 @@ class DeveloperSettingsWidgets extends StatelessWidget {
   Future generateNewDailyTracks(BuildContext context) async {
     int numOfDailyTracksToGenerate = 50;
     int millisecondDelay = 500;
+    double percent = 0.75;
 
     DateTime date = DateTime.now();
     int i = 0;
     int daysBetweenGaps = 1;
     print(
-        'generating daily tracks... (estimated ${numOfDailyTracksToGenerate * millisecondDelay * 0.001} seconds)');
+        'generating daily tracks... (estimated ${numOfDailyTracksToGenerate * millisecondDelay * 0.001 * (1 + percent)} seconds)');
     while (i < numOfDailyTracksToGenerate) {
-      if (Random().nextBool()) {
+      if (Random().nextDouble() <= percent) {
         date = date.add(Duration(days: daysBetweenGaps));
 
         // delay for too many requests

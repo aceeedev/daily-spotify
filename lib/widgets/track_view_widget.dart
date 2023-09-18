@@ -34,7 +34,7 @@ class TrackView extends StatelessWidget {
   final Track track;
   final Color averageColorOfImage;
 
-  static const List<int> flexValues = [4, 46, 20, 7];
+  static const List<int> flexValues = [6, 46, 20, 7];
   static const List<String> emojiOptions = ['😮', '🔥', '❤️', '💃', '🕺'];
 
   final GlobalKey openInSpotifyKey = GlobalKey();

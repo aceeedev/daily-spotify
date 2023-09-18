@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
             customPadding: const EdgeInsets.all(0.0),
             showLogo: false,
             child: FutureBuilder(
+              future: getDailyTrack(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasError) {
@@ -84,7 +85,6 @@ class _HomePageState extends State<HomePage> {
                 return const LoadingIndicator(
                     text: 'Generating your curated daily song...');
               },
-              future: getDailyTrack(),
             )));
   }
 

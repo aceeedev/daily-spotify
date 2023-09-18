@@ -50,6 +50,10 @@ Future<Map<String, List<dynamic>>> getRecommendationSeeds(
       genreList = getDefaultGenres();
     } else {
       genreList = (await filterByGenre(accessToken, artistList)).keys.toList();
+
+      if (genreList.isEmpty) {
+        genreList = getDefaultGenres();
+      }
     }
 
     seedGenres.add(genreList.first);
