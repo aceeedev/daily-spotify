@@ -46,8 +46,9 @@ class _SearchState extends State<Search> {
               maxLines: 2,
               style: Styles().subtitleText,
               decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Search',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(24.0))),
+                labelText: '',
               ),
             ),
           ),

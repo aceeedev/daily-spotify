@@ -5,9 +5,9 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
+import 'package:daily_spotify/widgets/search_widget.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/default_config.dart';
-import 'package:daily_spotify/utils/combine_top_items.dart';
 import 'package:daily_spotify/styles.dart';
 
 class ArtistSelector extends StatefulWidget {
@@ -22,10 +22,13 @@ class _ArtistSelectorState extends State<ArtistSelector> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          'Pick your top three favorite artists',
-          textAlign: TextAlign.center,
-          style: Styles().subtitleText,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(
+            'Pick your top three favorite artists',
+            textAlign: TextAlign.center,
+            style: Styles().subtitleText,
+          ),
         ),
         FutureBuilder(
             future: getItemList(),
@@ -36,7 +39,71 @@ class _ArtistSelectorState extends State<ArtistSelector> {
                       child: Text('An error has occurred, ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   return Expanded(
-                      child: CardView(itemList: snapshot.data!, type: Artist));
+                    child: ListView(
+                      children: [
+                        if (context
+                            .watch<SetupForm>()
+                            .selectedArtistList
+                            .isNotEmpty) ...[
+                          Text(
+                            'Selected',
+                            textAlign: TextAlign.center,
+                            style: Styles().largeText,
+                          ),
+                          CardView(
+                              itemList:
+                                  context.watch<SetupForm>().selectedArtistList,
+                              type: Artist)
+                        ],
+                        Text(
+                          'Recommended',
+                          textAlign: TextAlign.center,
+                          style: Styles().largeText,
+                        ),
+                        CardView(itemList: snapshot.data!, type: Artist),
+                        Text(
+                          'Search',
+                          textAlign: TextAlign.center,
+                          style: Styles().largeText,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Search(onSubmit: (searchedTerm) async {
+                            AccessToken accessToken =
+                                await requestAccessTokenWithoutAuthCode(
+                                    context);
+
+                            List<Artist> searchResults = (await searchForItem(
+                                accessToken: accessToken,
+                                type: Artist,
+                                term: searchedTerm)) as List<Artist>;
+
+                            if (!mounted) return;
+                            context
+                                .read<SetupForm>()
+                                .setSearchedArtistList(searchResults);
+                          }),
+                        ),
+                        if (context
+                            .watch<SetupForm>()
+                            .searchedArtistList
+                            .isNotEmpty)
+                          CardView(
+                              itemList:
+                                  context.watch<SetupForm>().searchedArtistList,
+                              type: Artist),
+                        if (context
+                            .watch<SetupForm>()
+                            .searchedArtistList
+                            .isEmpty)
+                          Text(
+                            'No results',
+                            style: Styles().subtitleText,
+                            textAlign: TextAlign.center,
+                          ),
+                      ],
+                    ),
+                  );
                 }
               }
 
@@ -59,8 +126,7 @@ class _ArtistSelectorState extends State<ArtistSelector> {
           await requestAccessTokenWithoutAuthCode(context);
 
       List<Artist> artistList =
-          (await combineTopItems(accessToken, Artist)).cast<Artist>().toList();
-
+          await getUserTopItems(accessToken: accessToken, type: Artist);
       if (artistList.isEmpty) {
         artistList = await getDefaultArtists(accessToken);
       }

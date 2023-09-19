@@ -10,20 +10,26 @@ class SetupForm with ChangeNotifier {
 
   final List<String> _totalGenreList = [];
   final List<String> _selectedGenreList = [];
+  List<String> _searchedGenreList = [];
   final List<Artist> _totalArtistList = [];
   final List<Artist> _selectedArtistList = [];
+  List<Artist> _searchedArtistList = [];
   final List<Track> _totalTrackList = [];
   final List<Track> _selectedTrackList = [];
+  List<Track> _searchedTrackList = [];
 
   int get step => _step;
   bool get finishedStep => _finishedStep;
   int get lastFinishedStep => _lastFinishedStep;
   List<String> get totalGenreList => _totalGenreList;
   List<String> get selectedGenreList => _selectedGenreList;
+  List<String> get searchedGenreList => _searchedGenreList;
   List<Artist> get totalArtistList => _totalArtistList;
   List<Artist> get selectedArtistList => _selectedArtistList;
+  List<Artist> get searchedArtistList => _searchedArtistList;
   List<Track> get totalTrackList => _totalTrackList;
   List<Track> get selectedTrackList => _selectedTrackList;
+  List<Track> get searchedTrackList => _searchedTrackList;
 
   void addToStep(int value) {
     _step += value;
@@ -55,11 +61,20 @@ class SetupForm with ChangeNotifier {
 
     _selectedGenreList.add(genre);
 
+    notifyListeners();
     return genre;
   }
 
   void removeFromSelectedGenreList(String genre) {
     _selectedGenreList.remove(genre);
+
+    notifyListeners();
+  }
+
+  void setSearchedGenreList(List<String> listToSet) {
+    _searchedGenreList = listToSet;
+
+    notifyListeners();
   }
 
   void addAllToTotalArtistList(List<Artist> listToAdd) {
@@ -74,11 +89,20 @@ class SetupForm with ChangeNotifier {
 
     _selectedArtistList.add(artist);
 
+    notifyListeners();
     return artist;
   }
 
   void removeFromSelectedArtistList(Artist artist) {
     _selectedArtistList.removeWhere(((element) => element.id == artist.id));
+
+    notifyListeners();
+  }
+
+  void setSearchedArtistList(List<Artist> listToSet) {
+    _searchedArtistList = listToSet;
+
+    notifyListeners();
   }
 
   void addAllToTotalTrackList(List<Track> listToAdd) {
@@ -93,10 +117,19 @@ class SetupForm with ChangeNotifier {
 
     _selectedTrackList.add(track);
 
+    notifyListeners();
     return track;
   }
 
   void removeFromSelectedTrackList(Track track) {
     _selectedTrackList.removeWhere((element) => element.id == track.id);
+
+    notifyListeners();
+  }
+
+  void setSearchedTrackList(List<Track> listToSet) {
+    _searchedTrackList = listToSet;
+
+    notifyListeners();
   }
 }

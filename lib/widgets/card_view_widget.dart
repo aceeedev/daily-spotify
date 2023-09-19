@@ -25,6 +25,8 @@ class _CardViewState extends State<CardView> {
       gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2),
       itemCount: widget.itemList.length,
+      physics: const ScrollPhysics(),
+      shrinkWrap: true,
       itemBuilder: (context, index) {
         dynamic item = widget.itemList[index];
         bool selected = false;
@@ -32,7 +34,7 @@ class _CardViewState extends State<CardView> {
           case Artist:
             {
               selected = context
-                      .read<SetupForm>()
+                      .watch<SetupForm>()
                       .selectedArtistList
                       .indexWhere(
                           (element) => element.id == (item as Artist).id) !=
@@ -41,8 +43,11 @@ class _CardViewState extends State<CardView> {
             break;
           case Track:
             {
-              selected = context.read<SetupForm>().selectedTrackList.indexWhere(
-                      (element) => element.id == (item as Track).id) !=
+              selected = context
+                      .watch<SetupForm>()
+                      .selectedTrackList
+                      .indexWhere(
+                          (element) => element.id == (item as Track).id) !=
                   -1;
             }
             break;
@@ -148,7 +153,7 @@ class _CustomCardState extends State<CustomCard> {
           child: Padding(
             padding: const EdgeInsets.all(5.0),
             child: Column(children: [
-              widget.item.images != null
+              widget.item.images != null && widget.item.images.isNotEmpty
                   ? AspectRatio(
                       aspectRatio: widget.type == Artist ? 8 / 7 : 3 / 2,
                       child: Image.network(

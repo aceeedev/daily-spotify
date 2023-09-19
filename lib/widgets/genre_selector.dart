@@ -20,14 +20,12 @@ class GenreSelector extends StatefulWidget {
 }
 
 class _GenreSelectorState extends State<GenreSelector> {
-  List<String> searchedTerms = [];
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
+          padding: const EdgeInsets.only(bottom: 8.0),
           child: Text(
             'Pick your top three favorite genres',
             textAlign: TextAlign.center,
@@ -47,30 +45,21 @@ class _GenreSelectorState extends State<GenreSelector> {
                       .map((e) => e.replaceAll('-', ' '))
                       .toList();
 
-                  // check to see if something was selected and not in
-                  //   recommended
-                  List<String> selectedAndNotRec = [];
-                  for (String selectedGenre
-                      in context.read<SetupForm>().selectedGenreList) {
-                    if (!(context
-                        .read<SetupForm>()
-                        .totalGenreList
-                        .contains(selectedGenre))) {
-                      print(selectedGenre);
-                      selectedAndNotRec.add(selectedGenre);
-                    }
-                  }
-
                   return Expanded(
-                    child: Column(
+                    child: ListView(
                       children: [
-                        if (selectedAndNotRec.isNotEmpty) ...[
+                        if (context
+                            .watch<SetupForm>()
+                            .selectedGenreList
+                            .isNotEmpty) ...[
                           Text(
                             'Selected',
                             style: Styles().largeText,
+                            textAlign: TextAlign.center,
                           ),
                           _simpleWrapChildren(
-                            getGenreButtons(selectedAndNotRec),
+                            getGenreButtons(
+                                context.watch<SetupForm>().selectedGenreList),
                           ),
                         ],
                         Padding(
@@ -78,31 +67,44 @@ class _GenreSelectorState extends State<GenreSelector> {
                           child: Text(
                             'Recommended',
                             style: Styles().largeText,
+                            textAlign: TextAlign.center,
                           ),
                         ),
                         _simpleWrapChildren(
                           getGenreButtons(
                               context.watch<SetupForm>().totalGenreList),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                          child: Search(onSubmit: (searchedTerm) {
-                            setState(() => searchedTerms = allPossibleGenres
-                                .where(
-                                    (element) => element.contains(searchedTerm))
-                                .toList());
-                          }),
+                        Text(
+                          'Search',
+                          textAlign: TextAlign.center,
+                          style: Styles().largeText,
                         ),
-                        if (searchedTerms.isNotEmpty)
+                        Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Search(
+                                onSubmit: (searchedTerm) => context
+                                    .read<SetupForm>()
+                                    .setSearchedGenreList(allPossibleGenres
+                                        .where((element) =>
+                                            element.contains(searchedTerm))
+                                        .toList()))),
+                        if (context
+                            .watch<SetupForm>()
+                            .searchedGenreList
+                            .isNotEmpty)
                           Expanded(
-                            child: _simpleWrapChildren(
-                                getGenreButtons(searchedTerms)),
+                            child: _simpleWrapChildren(getGenreButtons(
+                                context.watch<SetupForm>().searchedGenreList)),
                           ),
-                        if (searchedTerms.isEmpty)
+                        if (context
+                            .watch<SetupForm>()
+                            .searchedGenreList
+                            .isEmpty)
                           Expanded(
                               child: Text(
                             'No results',
                             style: Styles().subtitleText,
+                            textAlign: TextAlign.center,
                           ))
                       ],
                     ),
@@ -185,8 +187,8 @@ class _GenreSelectorState extends State<GenreSelector> {
   List<Widget> getGenreButtons(List<String> genreList) {
     return genreList
         .map((e) => GenreButton(
-            genre: e,
-            selected: context.read<SetupForm>().selectedGenreList.contains(e)))
+              genre: e,
+            ))
         .toList();
   }
 
@@ -204,10 +206,9 @@ class _GenreSelectorState extends State<GenreSelector> {
 
 // ignore: must_be_immutable
 class GenreButton extends StatefulWidget {
-  GenreButton({super.key, required this.genre, required this.selected});
+  GenreButton({super.key, required this.genre});
 
   final String genre;
-  bool selected;
 
   @override
   State<GenreButton> createState() => _GenreButtonState();
@@ -220,27 +221,19 @@ class _GenreButtonState extends State<GenreButton> {
       padding: const EdgeInsets.only(right: 8.0),
       child: ElevatedButton(
           onPressed: () {
-            if (widget.selected) {
+            if (context
+                .read<SetupForm>()
+                .selectedGenreList
+                .contains(widget.genre)) {
               context
                   .read<SetupForm>()
                   .removeFromSelectedGenreList(widget.genre);
-
-              setState(() {
-                widget.selected = false;
-              });
             } else {
-              String? addedGenre = context
-                  .read<SetupForm>()
-                  .addToSelectedGenreList(widget.genre);
-
-              if (addedGenre != null) {
-                setState(() {
-                  widget.selected = true;
-                });
-              }
+              context.read<SetupForm>().addToSelectedGenreList(widget.genre);
             }
           },
-          style: widget.selected
+          style: (context.watch<SetupForm>().selectedGenreList)
+                  .contains(widget.genre)
               ? Styles().selectedElevatedButtonStyle
               : Styles().unselectedElevatedButtonStyle,
           child: Text(

@@ -116,6 +116,11 @@ class NextOrPreviousStepButton extends StatelessWidget {
       child: !nextOrPrevious || context.watch<SetupForm>().finishedStep
           ? IconButton(
               onPressed: () async {
+                // reset searched lists
+                context.read<SetupForm>().setSearchedGenreList([]);
+                context.read<SetupForm>().setSearchedArtistList([]);
+                context.read<SetupForm>().setSearchedTrackList([]);
+
                 if (context.read<SetupForm>().step >= 3 && nextOrPrevious) {
                   // last step--finished step 4
                   await db.Config.instance.saveGenreConfig(

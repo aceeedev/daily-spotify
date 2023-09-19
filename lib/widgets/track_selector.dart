@@ -5,9 +5,9 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
+import 'package:daily_spotify/widgets/search_widget.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/default_config.dart';
-import 'package:daily_spotify/utils/combine_top_items.dart';
 import 'package:daily_spotify/styles.dart';
 
 class TrackSelector extends StatefulWidget {
@@ -18,23 +18,17 @@ class TrackSelector extends StatefulWidget {
 }
 
 class _TrackSelectorState extends State<TrackSelector> {
-  List<Track> itemList = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    getItemList();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          'Pick your top three favorite songs',
-          textAlign: TextAlign.center,
-          style: Styles().subtitleText,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(
+            'Pick your top three favorite songs',
+            textAlign: TextAlign.center,
+            style: Styles().subtitleText,
+          ),
         ),
         FutureBuilder(
             future: getItemList(),
@@ -45,7 +39,66 @@ class _TrackSelectorState extends State<TrackSelector> {
                       child: Text('An error has occurred, ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   return Expanded(
-                      child: CardView(itemList: snapshot.data!, type: Track));
+                      child: ListView(
+                    children: [
+                      if (context
+                          .watch<SetupForm>()
+                          .selectedTrackList
+                          .isNotEmpty) ...[
+                        Text(
+                          'Selected',
+                          textAlign: TextAlign.center,
+                          style: Styles().largeText,
+                        ),
+                        CardView(
+                            itemList:
+                                context.watch<SetupForm>().selectedTrackList,
+                            type: Track),
+                      ],
+                      Text(
+                        'Recommended',
+                        textAlign: TextAlign.center,
+                        style: Styles().largeText,
+                      ),
+                      CardView(itemList: snapshot.data!, type: Track),
+                      Text(
+                        'Search',
+                        textAlign: TextAlign.center,
+                        style: Styles().largeText,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Search(onSubmit: (searchedTerm) async {
+                          AccessToken accessToken =
+                              await requestAccessTokenWithoutAuthCode(context);
+
+                          List<Track> searchResults = (await searchForItem(
+                              accessToken: accessToken,
+                              type: Track,
+                              term: searchedTerm)) as List<Track>;
+
+                          if (!mounted) return;
+                          context
+                              .read<SetupForm>()
+                              .setSearchedTrackList(searchResults);
+                        }),
+                      ),
+                      if (context
+                          .watch<SetupForm>()
+                          .searchedTrackList
+                          .isNotEmpty)
+                        CardView(
+                            itemList:
+                                context.watch<SetupForm>().searchedTrackList,
+                            type: Track),
+                      if (context.watch<SetupForm>().searchedTrackList.isEmpty)
+                        Text(
+                          'No results',
+                          style: Styles().subtitleText,
+                          textAlign: TextAlign.center,
+                        ),
+                    ],
+                  ));
                 }
               }
 
@@ -60,7 +113,7 @@ class _TrackSelectorState extends State<TrackSelector> {
     AccessToken accessToken = await requestAccessTokenWithoutAuthCode(context);
 
     List<Track> trackList =
-        (await combineTopItems(accessToken, Track)).cast<Track>().toList();
+        await getUserTopItems(accessToken: accessToken, type: Track);
 
     // get tracks from top global 50 songs on Spotify if needed
     if (trackList.isEmpty) {

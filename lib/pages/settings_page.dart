@@ -134,8 +134,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
           await db.Config.instance.saveGenreConfig(genreList);
 
+          if (!mounted) return;
+          context.read<SetupForm>().setSearchedGenreList([]);
+
           setState(() {});
         },
+        onBackButtonPressed: () =>
+            context.read<SetupForm>().setSearchedGenreList([]),
       ),
       SettingsListView(
         text: 'Your favorite artists',
@@ -147,21 +152,30 @@ class _SettingsPageState extends State<SettingsPage> {
 
           await db.Config.instance.saveArtistConfig(artistList);
 
+          if (!mounted) return;
+          context.read<SetupForm>().setSearchedArtistList([]);
+
           setState(() {});
         },
+        onBackButtonPressed: () =>
+            context.read<SetupForm>().setSearchedArtistList([]),
       ),
       SettingsListView(
-        text: 'Your favorite tracks',
-        items: trackImageList,
-        settingsSelector: const TrackSelector(),
-        onSave: () async {
-          List<Track> trackList = context.read<SetupForm>().selectedTrackList;
+          text: 'Your favorite tracks',
+          items: trackImageList,
+          settingsSelector: const TrackSelector(),
+          onSave: () async {
+            List<Track> trackList = context.read<SetupForm>().selectedTrackList;
 
-          await db.Config.instance.saveTrackConfig(trackList);
+            await db.Config.instance.saveTrackConfig(trackList);
 
-          setState(() {});
-        },
-      ),
+            if (!mounted) return;
+            context.read<SetupForm>().setSearchedTrackList([]);
+
+            setState(() {});
+          },
+          onBackButtonPressed: () =>
+              context.read<SetupForm>().setSearchedTrackList([])),
       SettingsButton(
         titleText: 'Disconnect',
         descriptionText: 'Remove this app from your Spotify account.',
@@ -204,11 +218,13 @@ class SettingsListView extends StatelessWidget {
       required this.text,
       required this.items,
       required this.settingsSelector,
-      required this.onSave});
+      required this.onSave,
+      this.onBackButtonPressed});
   final String text;
   final List<dynamic> items;
   final Widget settingsSelector;
   final VoidCallback onSave;
+  final Function()? onBackButtonPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -238,6 +254,7 @@ class SettingsListView extends StatelessWidget {
                             builder: (context) => SettingsEdit(
                                   settingsSelector: settingsSelector,
                                   onSave: onSave,
+                                  onBackButtonPressed: onBackButtonPressed,
                                 ))),
                     color: Styles().mainColor,
                   ),
@@ -320,9 +337,13 @@ class SettingsListView extends StatelessWidget {
 /// settings and [onSave], a method that is called when the edit has been saved.
 class SettingsEdit extends StatelessWidget {
   const SettingsEdit(
-      {super.key, required this.settingsSelector, required this.onSave});
+      {super.key,
+      required this.settingsSelector,
+      required this.onSave,
+      this.onBackButtonPressed});
   final Widget settingsSelector;
   final VoidCallback onSave;
+  final Function()? onBackButtonPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -330,7 +351,16 @@ class SettingsEdit extends StatelessWidget {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Styles().backgroundColor,
-          leading: BackButton(color: Styles().mainColor),
+          leading: BackButton(
+            color: Styles().mainColor,
+            onPressed: () {
+              if (onBackButtonPressed != null) {
+                onBackButtonPressed!();
+              }
+
+              Navigator.of(context).pop();
+            },
+          ),
           actions: [
             IconButton(
                 onPressed: () {
