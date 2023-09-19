@@ -136,11 +136,14 @@ class _SettingsPageState extends State<SettingsPage> {
 
           if (!mounted) return;
           context.read<SetupForm>().setSearchedGenreList([]);
+          context.read<SetupForm>().resetSegmentedButtonValue();
 
           setState(() {});
         },
-        onBackButtonPressed: () =>
-            context.read<SetupForm>().setSearchedGenreList([]),
+        onBackButtonPressed: () {
+          context.read<SetupForm>().setSearchedGenreList([]);
+          context.read<SetupForm>().resetSegmentedButtonValue();
+        },
       ),
       SettingsListView(
         text: 'Your favorite artists',
@@ -154,11 +157,14 @@ class _SettingsPageState extends State<SettingsPage> {
 
           if (!mounted) return;
           context.read<SetupForm>().setSearchedArtistList([]);
+          context.read<SetupForm>().resetSegmentedButtonValue();
 
           setState(() {});
         },
-        onBackButtonPressed: () =>
-            context.read<SetupForm>().setSearchedArtistList([]),
+        onBackButtonPressed: () {
+          context.read<SetupForm>().setSearchedArtistList([]);
+          context.read<SetupForm>().resetSegmentedButtonValue();
+        },
       ),
       SettingsListView(
           text: 'Your favorite tracks',
@@ -171,11 +177,14 @@ class _SettingsPageState extends State<SettingsPage> {
 
             if (!mounted) return;
             context.read<SetupForm>().setSearchedTrackList([]);
+            context.read<SetupForm>().resetSegmentedButtonValue();
 
             setState(() {});
           },
-          onBackButtonPressed: () =>
-              context.read<SetupForm>().setSearchedTrackList([])),
+          onBackButtonPressed: () {
+            context.read<SetupForm>().setSearchedTrackList([]);
+            context.read<SetupForm>().resetSegmentedButtonValue();
+          }),
       SettingsButton(
         titleText: 'Disconnect',
         descriptionText: 'Remove this app from your Spotify account.',

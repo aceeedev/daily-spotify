@@ -42,8 +42,7 @@ class _SearchState extends State<Search> {
                 }
                 return null;
               },
-              keyboardType: TextInputType.multiline,
-              maxLines: 2,
+              maxLines: 1,
               style: Styles().subtitleText,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(

@@ -5,7 +5,7 @@ import 'package:daily_spotify/backend/spotify_api/spotify_api.dart';
 import 'package:daily_spotify/backend/database_manager.dart' as db;
 import 'package:daily_spotify/widgets/card_view_widget.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
-import 'package:daily_spotify/widgets/search_widget.dart';
+import 'package:daily_spotify/widgets/segmented_button_for_selectors_widget.dart';
 import 'package:daily_spotify/utils/request_access_token_without_auth_code.dart';
 import 'package:daily_spotify/utils/default_config.dart';
 import 'package:daily_spotify/styles.dart';
@@ -55,52 +55,11 @@ class _ArtistSelectorState extends State<ArtistSelector> {
                                   context.watch<SetupForm>().selectedArtistList,
                               type: Artist)
                         ],
-                        Text(
-                          'Recommended',
-                          textAlign: TextAlign.center,
-                          style: Styles().largeText,
-                        ),
-                        CardView(itemList: snapshot.data!, type: Artist),
-                        Text(
-                          'Search',
-                          textAlign: TextAlign.center,
-                          style: Styles().largeText,
-                        ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Search(onSubmit: (searchedTerm) async {
-                            AccessToken accessToken =
-                                await requestAccessTokenWithoutAuthCode(
-                                    context);
-
-                            List<Artist> searchResults = (await searchForItem(
-                                accessToken: accessToken,
-                                type: Artist,
-                                term: searchedTerm)) as List<Artist>;
-
-                            if (!mounted) return;
-                            context
-                                .read<SetupForm>()
-                                .setSearchedArtistList(searchResults);
-                          }),
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: SegmentedButtonForSelectors(
+                              recommendations: snapshot.data!, type: Artist),
                         ),
-                        if (context
-                            .watch<SetupForm>()
-                            .searchedArtistList
-                            .isNotEmpty)
-                          CardView(
-                              itemList:
-                                  context.watch<SetupForm>().searchedArtistList,
-                              type: Artist),
-                        if (context
-                            .watch<SetupForm>()
-                            .searchedArtistList
-                            .isEmpty)
-                          Text(
-                            'No results',
-                            style: Styles().subtitleText,
-                            textAlign: TextAlign.center,
-                          ),
                       ],
                     ),
                   );

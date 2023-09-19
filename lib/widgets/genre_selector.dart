@@ -8,7 +8,7 @@ import 'package:daily_spotify/utils/filter_by_genre.dart';
 import 'package:daily_spotify/utils/combine_top_items.dart';
 import 'package:daily_spotify/utils/default_config.dart';
 import 'package:daily_spotify/widgets/loading_indicator_widget.dart';
-import 'package:daily_spotify/widgets/search_widget.dart';
+import 'package:daily_spotify/widgets/segmented_button_for_selectors_widget.dart';
 import 'package:daily_spotify/styles.dart';
 
 class GenreSelector extends StatefulWidget {
@@ -63,49 +63,16 @@ class _GenreSelectorState extends State<GenreSelector> {
                           ),
                         ],
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Recommended',
-                            style: Styles().largeText,
-                            textAlign: TextAlign.center,
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: SegmentedButtonForSelectors(
+                            recommendations:
+                                context.watch<SetupForm>().totalGenreList,
+                            type: String,
+                            simpleWrapChildren: _simpleWrapChildren,
+                            allPossibleGenres: allPossibleGenres,
+                            getGenreButtons: getGenreButtons,
                           ),
                         ),
-                        _simpleWrapChildren(
-                          getGenreButtons(
-                              context.watch<SetupForm>().totalGenreList),
-                        ),
-                        Text(
-                          'Search',
-                          textAlign: TextAlign.center,
-                          style: Styles().largeText,
-                        ),
-                        Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Search(
-                                onSubmit: (searchedTerm) => context
-                                    .read<SetupForm>()
-                                    .setSearchedGenreList(allPossibleGenres
-                                        .where((element) =>
-                                            element.contains(searchedTerm))
-                                        .toList()))),
-                        if (context
-                            .watch<SetupForm>()
-                            .searchedGenreList
-                            .isNotEmpty)
-                          Expanded(
-                            child: _simpleWrapChildren(getGenreButtons(
-                                context.watch<SetupForm>().searchedGenreList)),
-                          ),
-                        if (context
-                            .watch<SetupForm>()
-                            .searchedGenreList
-                            .isEmpty)
-                          Expanded(
-                              child: Text(
-                            'No results',
-                            style: Styles().subtitleText,
-                            textAlign: TextAlign.center,
-                          ))
                       ],
                     ),
                   );

@@ -8,6 +8,8 @@ class SetupForm with ChangeNotifier {
 
   static const int _maxNumSelections = 3;
 
+  bool _segmentedButtonValue = true;
+
   final List<String> _totalGenreList = [];
   final List<String> _selectedGenreList = [];
   List<String> _searchedGenreList = [];
@@ -21,6 +23,7 @@ class SetupForm with ChangeNotifier {
   int get step => _step;
   bool get finishedStep => _finishedStep;
   int get lastFinishedStep => _lastFinishedStep;
+  bool get segmentedButtonValue => _segmentedButtonValue;
   List<String> get totalGenreList => _totalGenreList;
   List<String> get selectedGenreList => _selectedGenreList;
   List<String> get searchedGenreList => _searchedGenreList;
@@ -33,6 +36,7 @@ class SetupForm with ChangeNotifier {
 
   void addToStep(int value) {
     _step += value;
+
     notifyListeners();
   }
 
@@ -46,6 +50,19 @@ class SetupForm with ChangeNotifier {
 
   void setLastFinishedStep(int value) {
     _lastFinishedStep = value;
+
+    notifyListeners();
+  }
+
+  void toggleSegmentedButtonValue() {
+    _segmentedButtonValue = !_segmentedButtonValue;
+
+    notifyListeners();
+  }
+
+  void resetSegmentedButtonValue() {
+    _segmentedButtonValue = true;
+
     notifyListeners();
   }
 

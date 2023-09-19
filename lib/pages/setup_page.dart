@@ -120,6 +120,8 @@ class NextOrPreviousStepButton extends StatelessWidget {
                 context.read<SetupForm>().setSearchedGenreList([]);
                 context.read<SetupForm>().setSearchedArtistList([]);
                 context.read<SetupForm>().setSearchedTrackList([]);
+                // reset segmented button
+                context.read<SetupForm>().resetSegmentedButtonValue();
 
                 if (context.read<SetupForm>().step >= 3 && nextOrPrevious) {
                   // last step--finished step 4
