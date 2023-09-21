@@ -127,6 +127,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
                     // go through and sort the daily tracks by month and year
                     List<List<DailyTrack>> dailyTracksByMonth = [];
+                    // ignore: unused_local_variable
                     for (DateTime month in monthsBetweenFirstDailyTrackAndNow) {
                       dailyTracksByMonth.add([]);
                     }

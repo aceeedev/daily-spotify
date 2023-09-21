@@ -21,7 +21,8 @@ extension DateOnlyCompare on DateTime {
 }
 
 /// Returns a widget of a stylized track view.
-/// Requires
+/// Requires [header], a widget, [dailyTrack], a [DailyTrack], [track], a
+/// [Track], and [averageColorOfImage], a Color.
 class TrackView extends StatelessWidget {
   TrackView(
       {super.key,

@@ -7,9 +7,9 @@ import 'package:daily_spotify/styles.dart';
 import 'package:daily_spotify/pages/home_page.dart';
 
 class SpotifyLogin extends StatefulWidget {
-  SpotifyLogin({super.key, required this.inSetup, this.authCode});
+  const SpotifyLogin({super.key, required this.inSetup, this.authCode});
   final bool inSetup;
-  String? authCode;
+  final String? authCode;
 
   @override
   State<SpotifyLogin> createState() => _SpotifyLoginState();

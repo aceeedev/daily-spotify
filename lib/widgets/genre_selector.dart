@@ -173,7 +173,7 @@ class _GenreSelectorState extends State<GenreSelector> {
 
 // ignore: must_be_immutable
 class GenreButton extends StatefulWidget {
-  GenreButton({super.key, required this.genre});
+  const GenreButton({super.key, required this.genre});
 
   final String genre;
 

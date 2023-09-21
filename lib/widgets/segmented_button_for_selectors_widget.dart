@@ -13,19 +13,19 @@ import 'package:daily_spotify/styles.dart';
 /// If [type] is String, also pass in the parameters, [simpleWrapChildren],
 /// [allPossibleGenres], and [getGenreButtons].
 class SegmentedButtonForSelectors extends StatefulWidget {
-  SegmentedButtonForSelectors(
+  const SegmentedButtonForSelectors(
       {super.key,
       required this.recommendations,
       required this.type,
       this.simpleWrapChildren,
       this.allPossibleGenres,
       this.getGenreButtons});
-  List<dynamic> recommendations;
-  Type type;
+  final List<dynamic> recommendations;
+  final Type type;
   // parameters for genres (type String)
-  Function(List<Widget>)? simpleWrapChildren;
-  List<String>? allPossibleGenres;
-  Function(List<String>)? getGenreButtons;
+  final Function(List<Widget>)? simpleWrapChildren;
+  final List<String>? allPossibleGenres;
+  final Function(List<String>)? getGenreButtons;
 
   @override
   State<SegmentedButtonForSelectors> createState() =>

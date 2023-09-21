@@ -151,19 +151,20 @@ class _CustomCardState extends State<CustomCard> {
               : Styles().unselectedElevation,
           shadowColor: Styles().shadowColor,
           child: Padding(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(children: [
               widget.item.images != null && widget.item.images.isNotEmpty
                   ? AspectRatio(
-                      aspectRatio: widget.type == Artist ? 8 / 7 : 3 / 2,
-                      child: Image.network(
-                          (widget.item.images[1] as SpotifyImage).url,
-                          width: (widget.item.images[1] as SpotifyImage)
-                              .width
-                              .toDouble(),
-                          height: (widget.item.images[1] as SpotifyImage)
-                              .height
-                              .toDouble()),
+                      aspectRatio: 1,
+                      child: Container(
+                          decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.fitWidth,
+                          alignment: FractionalOffset.topCenter,
+                          image: NetworkImage(
+                              (widget.item.images[1] as SpotifyImage).url),
+                        ),
+                      )),
                     )
                   : const SizedBox.shrink(),
               Text(

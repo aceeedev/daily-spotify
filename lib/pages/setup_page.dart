@@ -21,7 +21,7 @@ class SetupPage extends StatefulWidget {
 
 class _SetupPageState extends State<SetupPage> {
   final List<Widget> stepWidgets = [
-    SpotifyLogin(inSetup: true),
+    const SpotifyLogin(inSetup: true),
     const GenreSelector(inSetup: true),
     const ArtistSelector(),
     const TrackSelector()
